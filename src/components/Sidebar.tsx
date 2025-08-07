@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SidebarProps {
   selectedAccount: string;
@@ -13,6 +14,8 @@ export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
   const accounts = ["Cuenta Principal", "Cuenta Marketing", "Cuenta Ventas"];
   const { signOut, user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -26,11 +29,11 @@ export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
   };
   
   const menuItems = [
-    { icon: Workflow, label: "Workflows", active: true },
-    { icon: Bot, label: "Agentes AI", active: false },
-    { icon: BarChart3, label: "Analytics", active: false },
-    { icon: Users, label: "Equipos", active: false },
-    { icon: Settings, label: "Configuración", active: false },
+    { icon: Workflow, label: "Workflows", active: location.pathname === "/", path: "/" },
+    { icon: Bot, label: "Agentes AI", active: location.pathname === "/agentes", path: "/agentes" },
+    { icon: BarChart3, label: "Analytics", active: false, path: "/analytics" },
+    { icon: Users, label: "Equipos", active: false, path: "/equipos" },
+    { icon: Settings, label: "Configuración", active: false, path: "/configuracion" },
   ];
 
   return (
@@ -71,6 +74,7 @@ export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
                   ? "bg-gradient-primary text-primary-foreground shadow-glow" 
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
+              onClick={() => navigate(item.path)}
             >
               <item.icon className="w-5 h-5" />
               {item.label}

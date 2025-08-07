@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Workflow {
   id: string;
@@ -24,6 +27,8 @@ interface Workflow {
 
 export const WorkflowGrid = () => {
   const { subscribed, createCheckout, openCustomerPortal, loading } = useSubscription();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [workflows, setWorkflows] = useState<Workflow[]>([
     {
       id: "1",
@@ -125,12 +130,48 @@ export const WorkflowGrid = () => {
         )
       );
 
-      toast({
-        title: workflow.enabled ? "Workflow desactivado" : "Workflow activado",
-        description: workflow.enabled 
-          ? "El workflow se ha desactivado" 
-          : "El workflow premium está ahora activo",
-      });
+      // If enabling workflow, create AI agent and redirect to agents page
+      if (!workflow.enabled) {
+        try {
+          const { error } = await supabase
+            .from('ai_agents')
+            .insert({
+              user_id: user?.id,
+              name: workflow.name,
+              description: workflow.description,
+              workflow_id: workflow.id,
+              status: 'active',
+              configuration: {
+                category: workflow.category,
+                executions: workflow.executions
+              }
+            });
+
+          if (error) throw error;
+
+          toast({
+            title: "Workflow activado",
+            description: "El agente IA ha sido creado. Redirigiendo a Agentes IA...",
+          });
+
+          // Redirect to agents page after a short delay
+          setTimeout(() => {
+            navigate('/agentes');
+          }, 1500);
+        } catch (error) {
+          console.error('Error creating AI agent:', error);
+          toast({
+            title: "Error",
+            description: "No se pudo crear el agente IA",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Workflow desactivado",
+          description: "El workflow se ha desactivado",
+        });
+      }
     }
   };
 
