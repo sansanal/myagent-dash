@@ -109,12 +109,8 @@ export const WorkflowGrid = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h2 className="text-2xl font-semibold text-foreground">Workflows Disponibles</h2>
-        <Button className="bg-gradient-primary text-primary-foreground shadow-glow">
-          <Bot className="w-4 h-4 mr-2" />
-          Crear Workflow
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
