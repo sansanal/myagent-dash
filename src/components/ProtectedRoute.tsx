@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -10,6 +11,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading, emailConfirmed, confirmEmail } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -18,14 +20,44 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }, [user, loading, navigate]);
 
   const handleConfirmEmail = async () => {
-    const { error } = await confirmEmail();
-    if (error) {
+    try {
+      const { error } = await confirmEmail();
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Error al confirmar email: " + (error.message || error),
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Éxito",
+          description: "Email confirmado correctamente. Recargando página...",
+        });
+        // Recargar la página después de confirmar para que se actualice el estado
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+    } catch (error) {
       console.error('Error confirming email:', error);
-      alert('Error al confirmar email. Por favor, intenta de nuevo.');
-    } else {
-      alert('Email confirmado exitosamente. Serás redirigido al dashboard.');
+      toast({
+        title: "Error",
+        description: "Error inesperado al confirmar email",
+        variant: "destructive",
+      });
     }
   };
+
+  // Auto-confirmar email si el usuario existe pero email no está confirmado
+  useEffect(() => {
+    if (user && !emailConfirmed && !loading) {
+      // Pequeño delay para evitar conflictos con otros useEffect
+      const timer = setTimeout(() => {
+        handleConfirmEmail();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [user, emailConfirmed, loading]);
 
   if (loading) {
     return (
