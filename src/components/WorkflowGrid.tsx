@@ -97,33 +97,39 @@ export const WorkflowGrid = () => {
     const workflow = workflows.find(w => w.id === id);
     if (!workflow) return;
 
-    // If trying to enable the workflow but not subscribed, start checkout
+    // If trying to enable ANY workflow and user is not subscribed, show subscription requirement
     if (!workflow.enabled && !subscribed) {
       toast({
-        title: "Suscripción requerida",
-        description: "Necesitas una suscripción activa para activar workflows premium",
+        title: "Suscripción Premium Requerida",
+        description: "Con €150/mes obtienes acceso a TODOS los workflows premium. ¿Quieres suscribirte?",
+        action: (
+          <Button onClick={createCheckout} disabled={loading}>
+            Suscribirse €150/mes
+          </Button>
+        ),
       });
-      await createCheckout();
       return;
     }
 
-    // If subscribed or disabling, toggle normally
-    setWorkflows(prev => 
-      prev.map(w => 
-        w.id === id 
-          ? { 
-              ...w, 
-              enabled: !w.enabled,
-              status: !w.enabled ? "active" : "inactive"
-            }
-          : w
-      )
-    );
+    // If subscribed, allow enabling/disabling any workflow freely
+    if (subscribed) {
+      setWorkflows(prev => 
+        prev.map(w => 
+          w.id === id 
+            ? { 
+                ...w, 
+                enabled: !w.enabled,
+                status: !w.enabled ? "active" : "inactive"
+              }
+            : w
+        )
+      );
 
-    if (!workflow.enabled) {
       toast({
-        title: "Workflow activado",
-        description: "El workflow premium está ahora activo",
+        title: workflow.enabled ? "Workflow desactivado" : "Workflow activado",
+        description: workflow.enabled 
+          ? "El workflow se ha desactivado" 
+          : "El workflow premium está ahora activo",
       });
     }
   };
