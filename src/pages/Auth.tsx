@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Zap } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { VLPTechLogo } from '@/components/VLPTechLogo';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -92,14 +93,9 @@ const Auth = () => {
       <Card className="w-full max-w-md bg-background/80 backdrop-blur border-border/50 shadow-2xl">
         <CardHeader className="space-y-1 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="p-3 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-              <Zap className="h-8 w-8" />
-            </div>
+            <VLPTechLogo size={100} />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-            AI Agentic Platform
-          </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-base">
             {isLogin ? 'Inicia sesión en tu cuenta' : 'Crea tu cuenta para comenzar'}
           </CardDescription>
         </CardHeader>
