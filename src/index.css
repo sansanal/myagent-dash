@@ -18,9 +18,9 @@ All colors MUST be HSL.
     --popover: 40 20% 6%;
     --popover-foreground: 40 8% 95%;
 
-    --primary: 85 75% 45%; /* Verde oliva */
-    --primary-foreground: 40 12% 8%;
-    --primary-glow: 120 100% 60%; /* Verde brillante */
+    --primary: 85 75% 35%; /* Verde oliva más oscuro */
+    --primary-foreground: 40 15% 4%;
+    --primary-glow: 120 80% 45%; /* Verde brillante más oscuro */
 
     --secondary: 85 30% 15%;
     --secondary-foreground: 40 8% 90%;
@@ -28,7 +28,7 @@ All colors MUST be HSL.
     --muted: 40 15% 8%;
     --muted-foreground: 40 8% 65%;
 
-    --accent: 120 100% 60%; /* Verde brillante para acentos */
+    --accent: 120 80% 45%; /* Verde brillante más oscuro para acentos */
     --accent-foreground: 40 15% 4%;
 
     --success: 142 71% 45%;
@@ -44,10 +44,10 @@ All colors MUST be HSL.
     --input: 40 20% 8%;
     --ring: 85 75% 45%;
 
-    /* Gradients con verdes */
-    --gradient-primary: linear-gradient(135deg, hsl(85 75% 45%), hsl(120 100% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(85 75% 45%), hsl(95 80% 50%));
-    --gradient-card: linear-gradient(135deg, hsl(40 15% 10% / 0.8), hsl(85 30% 25% / 0.6));
+    /* Gradients con verdes más oscuros */
+    --gradient-primary: linear-gradient(135deg, hsl(85 75% 35%), hsl(120 80% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(85 75% 35%), hsl(95 70% 40%));
+    --gradient-card: linear-gradient(135deg, hsl(40 20% 6% / 0.8), hsl(85 30% 15% / 0.6));
     
     /* Shadows & Effects con toque verde */
     --shadow-glow: 0 0 40px hsl(120 100% 60% / 0.3);
