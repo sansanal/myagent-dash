@@ -475,7 +475,7 @@ export const AgentesIA = () => {
                       <TableHead>Estado</TableHead>
                       <TableHead>Categoría</TableHead>
                       <TableHead>Ejecuciones</TableHead>
-                      <TableHead>Switch</TableHead>
+                      <TableHead>Activado</TableHead>
                       <TableHead className="w-32">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
