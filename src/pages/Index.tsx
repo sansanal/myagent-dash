@@ -1,11 +1,24 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { Sidebar } from "@/components/Sidebar";
+import { WorkflowGrid } from "@/components/WorkflowGrid";
+import { DashboardHeader } from "@/components/DashboardHeader";
+import { DashboardStats } from "@/components/DashboardStats";
 
 const Index = () => {
+  const [selectedAccount, setSelectedAccount] = useState("Cuenta Principal");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <div className="flex">
+        <Sidebar 
+          selectedAccount={selectedAccount}
+          onAccountChange={setSelectedAccount}
+        />
+        <main className="flex-1 p-6 ml-64">
+          <DashboardHeader selectedAccount={selectedAccount} />
+          <DashboardStats />
+          <WorkflowGrid />
+        </main>
       </div>
     </div>
   );
