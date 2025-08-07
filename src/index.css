@@ -8,28 +8,28 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Olive Green & Bright Green Theme */
-    --background: 40 12% 8%;
+    /* Olive Green & Bright Green Theme - Darker */
+    --background: 40 15% 4%;
     --foreground: 40 8% 95%;
 
-    --card: 40 15% 10%;
+    --card: 40 20% 6%;
     --card-foreground: 40 8% 95%;
 
-    --popover: 40 15% 10%;
+    --popover: 40 20% 6%;
     --popover-foreground: 40 8% 95%;
 
     --primary: 85 75% 45%; /* Verde oliva */
     --primary-foreground: 40 12% 8%;
     --primary-glow: 120 100% 60%; /* Verde brillante */
 
-    --secondary: 85 30% 25%;
+    --secondary: 85 30% 15%;
     --secondary-foreground: 40 8% 90%;
 
-    --muted: 40 12% 15%;
+    --muted: 40 15% 8%;
     --muted-foreground: 40 8% 65%;
 
     --accent: 120 100% 60%; /* Verde brillante para acentos */
-    --accent-foreground: 40 12% 8%;
+    --accent-foreground: 40 15% 4%;
 
     --success: 142 71% 45%;
     --success-foreground: 40 12% 8%;
@@ -40,8 +40,8 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 40 8% 95%;
 
-    --border: 40 15% 20%;
-    --input: 40 15% 15%;
+    --border: 40 20% 12%;
+    --input: 40 20% 8%;
     --ring: 85 75% 45%;
 
     /* Gradients con verdes */
