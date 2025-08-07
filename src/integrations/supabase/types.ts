@@ -19,6 +19,7 @@ export type Database = {
           company_name: string | null
           created_at: string
           email: string
+          email_confirmed: number
           full_name: string | null
           id: string
           updated_at: string
@@ -28,6 +29,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email: string
+          email_confirmed?: number
           full_name?: string | null
           id?: string
           updated_at?: string
@@ -37,6 +39,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email?: string
+          email_confirmed?: number
           full_name?: string | null
           id?: string
           updated_at?: string
@@ -49,7 +52,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      confirm_user_email: {
+        Args: { user_id_param: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
