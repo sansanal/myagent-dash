@@ -32,7 +32,7 @@ const App = () => (
                 } 
               />
               <Route 
-                path="/agentes" 
+                path="/agents" 
                 element={
                   <ProtectedRoute>
                     <AgentesIA />

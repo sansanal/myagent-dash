@@ -30,7 +30,7 @@ export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
   
   const menuItems = [
     { icon: Workflow, label: "Workflows", active: location.pathname === "/", path: "/" },
-    { icon: Bot, label: "Agentes AI", active: location.pathname === "/agentes", path: "/agentes" },
+    { icon: Bot, label: "Agentes AI", active: location.pathname === "/agents", path: "/agents" },
     { icon: BarChart3, label: "Analytics", active: false, path: "/analytics" },
     { icon: Users, label: "Equipos", active: false, path: "/equipos" },
     { icon: Settings, label: "Configuración", active: false, path: "/configuracion" },

@@ -156,7 +156,7 @@ export const WorkflowGrid = () => {
 
           // Redirect to agents page after a short delay
           setTimeout(() => {
-            navigate('/agentes');
+            navigate('/agents');
           }, 1500);
         } catch (error) {
           console.error('Error creating AI agent:', error);
@@ -167,10 +167,27 @@ export const WorkflowGrid = () => {
           });
         }
       } else {
-        toast({
-          title: "Workflow desactivado",
-          description: "El workflow se ha desactivado",
-        });
+        // If disabling workflow, update agent status in database
+        try {
+          const { error } = await supabase
+            .from('ai_agents')
+            .update({ status: 'inactive' })
+            .eq('workflow_id', workflow.id)
+            .eq('user_id', user?.id);
+
+          if (error) throw error;
+
+          toast({
+            title: "Workflow desactivado",
+            description: "El workflow se ha desactivado",
+          });
+        } catch (error) {
+          console.error('Error updating agent status:', error);
+          toast({
+            title: "Workflow desactivado",
+            description: "El workflow se ha desactivado",
+          });
+        }
       }
     }
   };
