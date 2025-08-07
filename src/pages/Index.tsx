@@ -1,26 +1,32 @@
 import { useState } from "react";
-import { Sidebar } from "@/components/Sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { WorkflowGrid } from "@/components/WorkflowGrid";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardStats } from "@/components/DashboardStats";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [selectedAccount, setSelectedAccount] = useState("Cuenta Principal");
+  const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex">
-        <Sidebar 
-          selectedAccount={selectedAccount}
-          onAccountChange={setSelectedAccount}
-        />
-        <main className="flex-1 p-6 ml-64">
-          <DashboardHeader selectedAccount={selectedAccount} />
-          <DashboardStats />
-          <WorkflowGrid />
+    <SidebarProvider defaultOpen={!isMobile}>
+      <div className="min-h-screen bg-background flex w-full">
+        <AppSidebar />
+        <main className="flex-1 flex flex-col">
+          <header className="h-12 flex items-center border-b border-border/50 px-4">
+            <SidebarTrigger className="mr-4" />
+            <h2 className="text-lg font-semibold">Dashboard</h2>
+          </header>
+          <div className="flex-1 p-6">
+            <DashboardHeader selectedAccount={selectedAccount} />
+            <DashboardStats />
+            <WorkflowGrid />
+          </div>
         </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
