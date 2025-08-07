@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { 
   Bot, Play, Pause, Settings, Trash2, 
   TrendingUp, Calendar, Clock, AlertCircle, Mail, MessageSquare, Database, FileText
 } from "lucide-react";
@@ -465,67 +473,74 @@ export const AgentesIA = () => {
             {/* Workflows Section */}
             <div>
               <h2 className="text-xl font-semibold text-foreground mb-4">Workflows Disponibles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {workflows.map((workflow) => (
-                  <Card 
-                    key={workflow.id}
-                    className="p-6 bg-gradient-card border-border/50 backdrop-blur-sm hover:shadow-card transition-all duration-300"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-gradient-primary">
-                          <workflow.icon className="w-5 h-5 text-primary-foreground" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground">{workflow.name}</h3>
+              <div className="bg-gradient-card border border-border/50 rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Workflow</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead>Categoría</TableHead>
+                      <TableHead>Ejecuciones</TableHead>
+                      <TableHead>Switch</TableHead>
+                      <TableHead className="w-32">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {workflows.map((workflow) => (
+                      <TableRow key={workflow.id} className="hover:bg-muted/50 transition-colors">
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-gradient-primary">
+                              <workflow.icon className="w-4 h-4 text-primary-foreground" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-foreground">{workflow.name}</div>
+                              <div className="text-sm text-muted-foreground line-clamp-1">
+                                {workflow.description}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
                           <Badge className={`text-xs ${getStatusColor(workflow.status)}`}>
                             {getStatusText(workflow.status)}
                           </Badge>
-                        </div>
-                      </div>
-                      <Switch
-                        checked={workflow.enabled}
-                        onCheckedChange={() => toggleWorkflow(workflow.id)}
-                        disabled={subscriptionLoading}
-                      />
-                    </div>
-
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {workflow.description}
-                    </p>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Categoría:</span>
-                        <span className="text-foreground">{workflow.category}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Ejecuciones:</span>
-                        <span className="text-foreground">{workflow.executions.toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={() => executeAgent(agents.find(a => a.workflow_id === workflow.id)?.id || '')}
-                        disabled={!workflow.enabled || !agents.find(a => a.workflow_id === workflow.id)}
-                      >
-                        <Play className="w-4 h-4 mr-2" />
-                        Ejecutar
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <Settings className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
+                        </TableCell>
+                        <TableCell className="text-foreground">{workflow.category}</TableCell>
+                        <TableCell className="text-foreground">
+                          {workflow.executions.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={workflow.enabled}
+                            onCheckedChange={() => toggleWorkflow(workflow.id)}
+                            disabled={subscriptionLoading}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => executeAgent(agents.find(a => a.workflow_id === workflow.id)?.id || '')}
+                              disabled={!workflow.enabled || !agents.find(a => a.workflow_id === workflow.id)}
+                            >
+                              <Play className="w-4 h-4 mr-2" />
+                              Ejecutar
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              className="text-muted-foreground hover:text-foreground"
+                            >
+                              <Settings className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
 
