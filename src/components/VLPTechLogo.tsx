@@ -6,72 +6,47 @@ interface VLPTechLogoProps {
 export const VLPTechLogo = ({ size = 80, className = "" }: VLPTechLogoProps) => {
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      {/* Hexagon with network nodes */}
+      {/* V logo with connection points */}
       <svg 
         width={size} 
-        height={size * 0.9} 
-        viewBox="0 0 200 180" 
-        className="mb-2"
+        height={size * 0.8} 
+        viewBox="0 0 200 160" 
+        className="mb-3"
       >
-        {/* Hexagon border */}
+        {/* Left arm of V */}
         <path
-          d="M100 10 L170 50 L170 130 L100 170 L30 130 L30 50 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="8"
-          className="text-primary"
+          d="M20 20 L80 140 L100 120 L50 20 Z"
+          fill="#2563eb"
+          className="drop-shadow-sm"
         />
         
-        {/* Inner hexagon */}
+        {/* Right arm of V */}
         <path
-          d="M100 25 L155 55 L155 125 L100 155 L45 125 L45 55 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          className="text-primary/60"
+          d="M180 20 L150 20 L100 120 L120 140 Z"
+          fill="#2563eb"
+          className="drop-shadow-sm"
         />
         
-        {/* Network nodes and connections */}
-        {/* Top node */}
-        <circle cx="100" cy="60" r="8" fill="currentColor" className="text-primary" />
+        {/* Connection nodes */}
+        {/* Top left node */}
+        <circle cx="35" cy="20" r="6" fill="#2563eb" />
         
-        {/* Top-right node */}
-        <circle cx="130" cy="75" r="8" fill="currentColor" className="text-primary" />
+        {/* Top right node */}
+        <circle cx="165" cy="20" r="6" fill="#2563eb" />
         
-        {/* Right node */}
-        <circle cx="140" cy="110" r="8" fill="currentColor" className="text-primary" />
+        {/* Bottom center nodes */}
+        <circle cx="90" cy="130" r="6" fill="#2563eb" />
+        <circle cx="110" cy="130" r="6" fill="#2563eb" />
         
-        {/* Bottom-right node */}
-        <circle cx="115" cy="135" r="8" fill="currentColor" className="text-primary" />
-        
-        {/* Bottom node */}
-        <circle cx="100" cy="120" r="8" fill="currentColor" className="text-primary" />
-        
-        {/* Bottom-left node */}
-        <circle cx="85" cy="135" r="8" fill="currentColor" className="text-primary" />
-        
-        {/* Left node */}
-        <circle cx="60" cy="110" r="8" fill="currentColor" className="text-primary" />
-        
-        {/* Top-left node */}
-        <circle cx="70" cy="75" r="8" fill="currentColor" className="text-primary" />
-        
-        {/* Connections */}
-        <line x1="100" y1="60" x2="130" y2="75" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="130" y1="75" x2="140" y2="110" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="140" y1="110" x2="115" y2="135" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="115" y1="135" x2="100" y2="120" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="100" y1="120" x2="85" y2="135" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="85" y1="135" x2="60" y2="110" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="60" y1="110" x2="70" y2="75" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="70" y1="75" x2="100" y2="60" stroke="currentColor" strokeWidth="3" className="text-primary" />
-        <line x1="100" y1="60" x2="100" y2="120" stroke="currentColor" strokeWidth="3" className="text-primary" />
+        {/* Connection lines */}
+        <line x1="35" y1="20" x2="90" y2="130" stroke="#2563eb" strokeWidth="3" opacity="0.6" />
+        <line x1="165" y1="20" x2="110" y2="130" stroke="#2563eb" strokeWidth="3" opacity="0.6" />
       </svg>
       
       {/* Company name */}
       <div className="text-center">
-        <div className="text-2xl font-bold tracking-wider text-foreground mb-1">
-          VLPTECH
+        <div className="text-2xl font-bold tracking-wider text-[#2563eb] mb-1">
+          VLP TECH
         </div>
         <div className="text-sm font-medium text-muted-foreground tracking-wide">
           AI AGENT PLATFORM
