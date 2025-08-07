@@ -50,18 +50,6 @@ export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
           </div>
         </div>
 
-        {/* Account Selector */}
-        <div className="mb-6">
-          <label className="text-sm text-muted-foreground mb-2 block">Cuenta Activa</label>
-          <Button
-            variant="outline"
-            className="w-full justify-between bg-muted/50 border-border hover:bg-muted"
-            onClick={() => {}}
-          >
-            <span className="text-foreground">{selectedAccount}</span>
-            <ChevronDown className="w-4 h-4" />
-          </Button>
-        </div>
 
         {/* Navigation */}
         <nav className="space-y-2">
