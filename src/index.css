@@ -8,100 +8,100 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Olive Green & Bright Green Theme - Darker */
-    --background: 40 15% 4%;
-    --foreground: 40 8% 95%;
+    /* Sophisticated Green Palette - Inspired by fashion tones */
+    --background: 0 0% 100%;
+    --foreground: 140 12% 15%;
 
-    --card: 40 20% 6%;
-    --card-foreground: 40 8% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 140 12% 15%;
 
-    --popover: 40 20% 6%;
-    --popover-foreground: 40 8% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 12% 15%;
 
-    --primary: 85 75% 35%; /* Verde oliva más oscuro */
-    --primary-foreground: 40 15% 4%;
-    --primary-glow: 120 80% 45%; /* Verde brillante más oscuro */
+    --primary: 140 45% 25%; /* Verde profundo elegante */
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 140 35% 35%; /* Verde medio */
 
-    --secondary: 85 30% 15%;
-    --secondary-foreground: 40 8% 90%;
+    --secondary: 140 25% 85%;
+    --secondary-foreground: 140 35% 20%;
 
-    --muted: 40 15% 8%;
-    --muted-foreground: 40 8% 65%;
+    --muted: 140 15% 96%;
+    --muted-foreground: 140 8% 45%;
 
-    --accent: 120 80% 45%; /* Verde brillante más oscuro para acentos */
-    --accent-foreground: 40 15% 4%;
+    --accent: 140 40% 45%; /* Verde salvia */
+    --accent-foreground: 0 0% 98%;
 
-    --success: 142 71% 45%;
-    --success-foreground: 40 12% 8%;
+    --success: 140 45% 35%;
+    --success-foreground: 0 0% 98%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 40 12% 8%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 40 8% 95%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 40 20% 12%;
-    --input: 40 20% 8%;
-    --ring: 85 75% 45%;
+    --border: 140 20% 90%;
+    --input: 140 20% 96%;
+    --ring: 140 45% 25%;
 
-    /* Gradients con verdes más oscuros */
-    --gradient-primary: linear-gradient(135deg, hsl(85 75% 35%), hsl(120 80% 45%));
-    --gradient-hero: linear-gradient(135deg, hsl(85 75% 35%), hsl(95 70% 40%));
-    --gradient-card: linear-gradient(135deg, hsl(40 20% 6% / 0.8), hsl(85 30% 15% / 0.6));
+    /* Gradients con tonos verdes elegantes */
+    --gradient-primary: linear-gradient(135deg, hsl(140 45% 25%), hsl(140 35% 35%));
+    --gradient-hero: linear-gradient(135deg, hsl(140 45% 25%), hsl(140 40% 45%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100% / 0.9), hsl(140 25% 85% / 0.3));
     
     /* Shadows & Effects con toque verde */
-    --shadow-glow: 0 0 40px hsl(120 100% 60% / 0.3);
-    --shadow-card: 0 10px 30px -10px hsl(40 12% 8% / 0.5);
+    --shadow-glow: 0 0 40px hsl(140 35% 35% / 0.2);
+    --shadow-card: 0 10px 30px -10px hsl(140 12% 15% / 0.1);
     
     --radius: 0.75rem;
 
-    --sidebar-background: 85 20% 96%;
-    --sidebar-foreground: 85 15% 25%;
-    --sidebar-primary: 85 75% 45%;
+    --sidebar-background: 140 25% 96%;
+    --sidebar-foreground: 140 35% 20%;
+    --sidebar-primary: 140 45% 25%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 85 30% 92%;
-    --sidebar-accent-foreground: 85 75% 25%;
-    --sidebar-border: 85 20% 88%;
-    --sidebar-ring: 120 100% 60%;
+    --sidebar-accent: 140 20% 90%;
+    --sidebar-accent-foreground: 140 35% 20%;
+    --sidebar-border: 140 20% 88%;
+    --sidebar-ring: 140 45% 25%;
   }
 
   .dark {
-    --background: 40 12% 4%;
-    --foreground: 40 8% 98%;
+    --background: 140 20% 8%;
+    --foreground: 140 10% 95%;
 
-    --card: 40 15% 6%;
-    --card-foreground: 40 8% 98%;
+    --card: 140 25% 10%;
+    --card-foreground: 140 10% 95%;
 
-    --popover: 40 15% 6%;
-    --popover-foreground: 40 8% 98%;
+    --popover: 140 25% 10%;
+    --popover-foreground: 140 10% 95%;
 
-    --primary: 85 75% 45%; /* Verde oliva */
-    --primary-foreground: 40 12% 4%;
+    --primary: 140 40% 60%; /* Verde más claro en dark mode */
+    --primary-foreground: 140 20% 8%;
 
-    --secondary: 85 30% 20%;
-    --secondary-foreground: 40 8% 98%;
+    --secondary: 140 30% 20%;
+    --secondary-foreground: 140 10% 90%;
 
-    --muted: 40 12% 12%;
-    --muted-foreground: 40 8% 65%;
+    --muted: 140 20% 15%;
+    --muted-foreground: 140 8% 65%;
 
-    --accent: 120 100% 60%; /* Verde brillante */
-    --accent-foreground: 40 12% 4%;
+    --accent: 140 35% 55%; /* Verde salvia claro */
+    --accent-foreground: 140 20% 8%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 40 8% 98%;
+    --destructive-foreground: 140 10% 95%;
 
-    --border: 40 15% 15%;
-    --input: 40 15% 12%;
-    --ring: 85 75% 45%;
+    --border: 140 25% 18%;
+    --input: 140 25% 15%;
+    --ring: 140 40% 60%;
     
-    --sidebar-background: 85 15% 8%;
-    --sidebar-foreground: 85 10% 95%;
-    --sidebar-primary: 85 75% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 85 20% 15%;
-    --sidebar-accent-foreground: 85 10% 95%;
-    --sidebar-border: 85 15% 15%;
-    --sidebar-ring: 120 100% 60%;
+    --sidebar-background: 140 25% 12%;
+    --sidebar-foreground: 140 10% 90%;
+    --sidebar-primary: 140 40% 60%;
+    --sidebar-primary-foreground: 140 20% 8%;
+    --sidebar-accent: 140 25% 18%;
+    --sidebar-accent-foreground: 140 10% 90%;
+    --sidebar-border: 140 25% 20%;
+    --sidebar-ring: 140 40% 60%;
   }
 }
 
