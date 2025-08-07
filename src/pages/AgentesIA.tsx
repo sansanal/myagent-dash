@@ -5,12 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { 
   Bot, Play, Pause, Settings, Trash2, 
-  TrendingUp, Calendar, Clock, AlertCircle 
+  TrendingUp, Calendar, Clock, AlertCircle, Mail, MessageSquare, Database, FileText
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { Sidebar } from "@/components/Sidebar";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface AIAgent {
   id: string;
@@ -33,19 +34,126 @@ interface AgentExecution {
   error_message?: string;
 }
 
+interface Workflow {
+  id: string;
+  name: string;
+  description: string;
+  icon: any;
+  status: "active" | "inactive" | "paused";
+  category: string;
+  executions: number;
+  lastRun: string;
+  enabled: boolean;
+}
+
 export const AgentesIA = () => {
   const [agents, setAgents] = useState<AIAgent[]>([]);
   const [executions, setExecutions] = useState<AgentExecution[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState("Cuenta Principal");
   const { user } = useAuth();
+  const { subscribed, createCheckout, loading: subscriptionLoading } = useSubscription();
+  
+  const [workflows, setWorkflows] = useState<Workflow[]>([
+    {
+      id: "1",
+      name: "Clasificación de Emails",
+      description: "Clasifica automáticamente emails entrantes según el contenido y prioridad",
+      icon: Mail,
+      status: "inactive",
+      category: "Comunicación",
+      executions: 1247,
+      lastRun: "Hace 5 min",
+      enabled: false
+    },
+    {
+      id: "2", 
+      name: "Generación de Contenido",
+      description: "Crea contenido para redes sociales basado en tendencias y audiencia",
+      icon: FileText,
+      status: "inactive",
+      category: "Marketing",
+      executions: 892,
+      lastRun: "Hace 15 min",
+      enabled: false
+    },
+    {
+      id: "3",
+      name: "Análisis de Sentimientos",
+      description: "Analiza comentarios y reviews para detectar sentimientos del cliente",
+      icon: TrendingUp,
+      status: "inactive",
+      category: "Analytics",
+      executions: 456,
+      lastRun: "Hace 2 horas",
+      enabled: false
+    },
+    {
+      id: "4",
+      name: "Chat Support Bot",
+      description: "Bot de soporte automatizado para responder consultas frecuentes",
+      icon: MessageSquare,
+      status: "inactive",
+      category: "Atención al Cliente",
+      executions: 2145,
+      lastRun: "Hace 1 min",
+      enabled: false
+    },
+    {
+      id: "5",
+      name: "Backup Inteligente",
+      description: "Backup automático de datos importantes con compresión IA",
+      icon: Database,
+      status: "inactive",
+      category: "Operaciones",
+      executions: 89,
+      lastRun: "Hace 1 día",
+      enabled: false
+    },
+    {
+      id: "6",
+      name: "Programador de Reuniones",
+      description: "Coordina automáticamente reuniones según disponibilidad del equipo",
+      icon: Calendar,
+      status: "inactive",
+      category: "Productividad",
+      executions: 234,
+      lastRun: "Hace 30 min",
+      enabled: false
+    }
+  ]);
 
   useEffect(() => {
     if (user) {
       fetchAgents();
       fetchExecutions();
+      syncWorkflowsWithAgents();
     }
   }, [user]);
+
+  const syncWorkflowsWithAgents = async () => {
+    try {
+      const { data: existingAgents, error } = await supabase
+        .from('ai_agents')
+        .select('workflow_id, status')
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      setWorkflows(prev => 
+        prev.map(workflow => {
+          const agent = existingAgents?.find(a => a.workflow_id === workflow.id);
+          return {
+            ...workflow,
+            enabled: agent ? agent.status === 'active' : false,
+            status: agent ? (agent.status as "active" | "inactive" | "paused") : 'inactive' as const
+          };
+        })
+      );
+    } catch (error) {
+      console.error('Error syncing workflows:', error);
+    }
+  };
 
   const fetchAgents = async () => {
     try {
@@ -145,6 +253,101 @@ export const AgentesIA = () => {
         description: "No se pudo ejecutar el agente",
         variant: "destructive",
       });
+    }
+  };
+
+  const toggleWorkflow = async (id: string) => {
+    const workflow = workflows.find(w => w.id === id);
+    if (!workflow) return;
+
+    // If trying to enable ANY workflow and user is not subscribed, show subscription requirement
+    if (!workflow.enabled && !subscribed) {
+      toast({
+        title: "Suscripción Premium Requerida",
+        description: "Con €150/mes obtienes acceso a TODOS los workflows premium. ¿Quieres suscribirte?",
+        action: (
+          <Button onClick={createCheckout} disabled={subscriptionLoading}>
+            Suscribirse €150/mes
+          </Button>
+        ),
+      });
+      return;
+    }
+
+    // If subscribed, allow enabling/disabling any workflow freely
+    if (subscribed) {
+      setWorkflows(prev => 
+        prev.map(w => 
+          w.id === id 
+            ? { 
+                ...w, 
+                enabled: !w.enabled,
+                status: !w.enabled ? "active" : "inactive"
+              }
+            : w
+        )
+      );
+
+      // If enabling workflow, create AI agent
+      if (!workflow.enabled) {
+        try {
+          const { error } = await supabase
+            .from('ai_agents')
+            .insert({
+              user_id: user?.id,
+              name: workflow.name,
+              description: workflow.description,
+              workflow_id: workflow.id,
+              status: 'active',
+              configuration: {
+                category: workflow.category,
+                executions: workflow.executions
+              }
+            });
+
+          if (error) throw error;
+
+          toast({
+            title: "Workflow activado",
+            description: "El agente IA ha sido creado exitosamente",
+          });
+
+          // Refresh agents list
+          fetchAgents();
+        } catch (error) {
+          console.error('Error creating AI agent:', error);
+          toast({
+            title: "Error",
+            description: "No se pudo crear el agente IA",
+            variant: "destructive",
+          });
+        }
+      } else {
+        // If disabling workflow, update agent status in database
+        try {
+          const { error } = await supabase
+            .from('ai_agents')
+            .update({ status: 'inactive' })
+            .eq('workflow_id', workflow.id)
+            .eq('user_id', user?.id);
+
+          if (error) throw error;
+
+          toast({
+            title: "Workflow desactivado",
+            description: "El workflow se ha desactivado",
+          });
+
+          // Refresh agents list
+          fetchAgents();
+        } catch (error) {
+          console.error('Error updating agent status:', error);
+          toast({
+            title: "Workflow desactivado",
+            description: "El workflow se ha desactivado",
+          });
+        }
+      }
     }
   };
 
@@ -257,6 +460,73 @@ export const AgentesIA = () => {
                   </div>
                 </div>
               </Card>
+            </div>
+
+            {/* Workflows Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-foreground mb-4">Workflows Disponibles</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {workflows.map((workflow) => (
+                  <Card 
+                    key={workflow.id}
+                    className="p-6 bg-gradient-card border-border/50 backdrop-blur-sm hover:shadow-card transition-all duration-300"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-gradient-primary">
+                          <workflow.icon className="w-5 h-5 text-primary-foreground" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">{workflow.name}</h3>
+                          <Badge className={`text-xs ${getStatusColor(workflow.status)}`}>
+                            {getStatusText(workflow.status)}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={workflow.enabled}
+                        onCheckedChange={() => toggleWorkflow(workflow.id)}
+                        disabled={subscriptionLoading}
+                      />
+                    </div>
+
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {workflow.description}
+                    </p>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Categoría:</span>
+                        <span className="text-foreground">{workflow.category}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Ejecuciones:</span>
+                        <span className="text-foreground">{workflow.executions.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => executeAgent(agents.find(a => a.workflow_id === workflow.id)?.id || '')}
+                        disabled={!workflow.enabled || !agents.find(a => a.workflow_id === workflow.id)}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Ejecutar
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             {/* Agents Grid */}

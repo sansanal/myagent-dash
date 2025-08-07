@@ -1,17 +1,10 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { 
   Bot, Mail, MessageSquare, Database, Calendar, 
-  FileText, Image, TrendingUp, Play, Settings 
+  FileText, TrendingUp, Settings 
 } from "lucide-react";
-import { useSubscription } from "@/hooks/useSubscription";
-import { toast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 
 interface Workflow {
   id: string;
@@ -26,10 +19,7 @@ interface Workflow {
 }
 
 export const WorkflowGrid = () => {
-  const { subscribed, createCheckout, openCustomerPortal, loading } = useSubscription();
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [workflows, setWorkflows] = useState<Workflow[]>([
+  const workflows: Workflow[] = [
     {
       id: "1",
       name: "Clasificación de Emails",
@@ -96,101 +86,8 @@ export const WorkflowGrid = () => {
       lastRun: "Hace 30 min",
       enabled: true
     }
-  ]);
+  ];
 
-  const toggleWorkflow = async (id: string) => {
-    const workflow = workflows.find(w => w.id === id);
-    if (!workflow) return;
-
-    // If trying to enable ANY workflow and user is not subscribed, show subscription requirement
-    if (!workflow.enabled && !subscribed) {
-      toast({
-        title: "Suscripción Premium Requerida",
-        description: "Con €150/mes obtienes acceso a TODOS los workflows premium. ¿Quieres suscribirte?",
-        action: (
-          <Button onClick={createCheckout} disabled={loading}>
-            Suscribirse €150/mes
-          </Button>
-        ),
-      });
-      return;
-    }
-
-    // If subscribed, allow enabling/disabling any workflow freely
-    if (subscribed) {
-      setWorkflows(prev => 
-        prev.map(w => 
-          w.id === id 
-            ? { 
-                ...w, 
-                enabled: !w.enabled,
-                status: !w.enabled ? "active" : "inactive"
-              }
-            : w
-        )
-      );
-
-      // If enabling workflow, create AI agent and redirect to agents page
-      if (!workflow.enabled) {
-        try {
-          const { error } = await supabase
-            .from('ai_agents')
-            .insert({
-              user_id: user?.id,
-              name: workflow.name,
-              description: workflow.description,
-              workflow_id: workflow.id,
-              status: 'active',
-              configuration: {
-                category: workflow.category,
-                executions: workflow.executions
-              }
-            });
-
-          if (error) throw error;
-
-          toast({
-            title: "Workflow activado",
-            description: "El agente IA ha sido creado. Redirigiendo a Agentes IA...",
-          });
-
-          // Redirect to agents page after a short delay
-          setTimeout(() => {
-            navigate('/agents');
-          }, 1500);
-        } catch (error) {
-          console.error('Error creating AI agent:', error);
-          toast({
-            title: "Error",
-            description: "No se pudo crear el agente IA",
-            variant: "destructive",
-          });
-        }
-      } else {
-        // If disabling workflow, update agent status in database
-        try {
-          const { error } = await supabase
-            .from('ai_agents')
-            .update({ status: 'inactive' })
-            .eq('workflow_id', workflow.id)
-            .eq('user_id', user?.id);
-
-          if (error) throw error;
-
-          toast({
-            title: "Workflow desactivado",
-            description: "El workflow se ha desactivado",
-          });
-        } catch (error) {
-          console.error('Error updating agent status:', error);
-          toast({
-            title: "Workflow desactivado",
-            description: "El workflow se ha desactivado",
-          });
-        }
-      }
-    }
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -240,11 +137,6 @@ export const WorkflowGrid = () => {
                   </Badge>
                 </div>
               </div>
-                <Switch
-                  checked={workflow.enabled}
-                  onCheckedChange={() => toggleWorkflow(workflow.id)}
-                  disabled={loading}
-                />
             </div>
 
             <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
@@ -267,26 +159,6 @@ export const WorkflowGrid = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1 border-border hover:bg-muted"
-                disabled={!workflow.enabled}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Ejecutar
-              </Button>
-              {subscribed && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={openCustomerPortal}
-                  disabled={loading}
-                  className="text-xs"
-                >
-                  Gestionar
-                </Button>
-              )}
               <Button 
                 variant="ghost" 
                 size="sm"
