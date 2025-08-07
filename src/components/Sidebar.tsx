@@ -1,6 +1,8 @@
-import { Bot, Workflow, BarChart3, Settings, ChevronDown, Users } from "lucide-react";
+import { Bot, Workflow, BarChart3, Settings, ChevronDown, Users, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface SidebarProps {
   selectedAccount: string;
@@ -9,6 +11,19 @@ interface SidebarProps {
 
 export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
   const accounts = ["Cuenta Principal", "Cuenta Marketing", "Cuenta Ventas"];
+  const { signOut, user } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo cerrar sesión",
+        variant: "destructive",
+      });
+    }
+  };
   
   const menuItems = [
     { icon: Workflow, label: "Workflows", active: true },
@@ -62,6 +77,28 @@ export const Sidebar = ({ selectedAccount, onAccountChange }: SidebarProps) => {
             </Button>
           ))}
         </nav>
+
+        {/* User Section */}
+        <div className="mt-auto pt-4 border-t border-border/50">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-background/30">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-foreground">
+                {user?.email}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                Usuario activo
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSignOut}
+              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </Card>
   );
