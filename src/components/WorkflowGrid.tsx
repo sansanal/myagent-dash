@@ -7,6 +7,8 @@ import {
   Bot, Mail, MessageSquare, Database, Calendar, 
   FileText, Image, TrendingUp, Play, Settings 
 } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
+import { toast } from "@/hooks/use-toast";
 
 interface Workflow {
   id: string;
@@ -21,6 +23,7 @@ interface Workflow {
 }
 
 export const WorkflowGrid = () => {
+  const { subscribed, createCheckout, openCustomerPortal, loading } = useSubscription();
   const [workflows, setWorkflows] = useState<Workflow[]>([
     {
       id: "1",
@@ -90,18 +93,39 @@ export const WorkflowGrid = () => {
     }
   ]);
 
-  const toggleWorkflow = (id: string) => {
+  const toggleWorkflow = async (id: string) => {
+    const workflow = workflows.find(w => w.id === id);
+    if (!workflow) return;
+
+    // If trying to enable the workflow but not subscribed, start checkout
+    if (!workflow.enabled && !subscribed) {
+      toast({
+        title: "Suscripción requerida",
+        description: "Necesitas una suscripción activa para activar workflows premium",
+      });
+      await createCheckout();
+      return;
+    }
+
+    // If subscribed or disabling, toggle normally
     setWorkflows(prev => 
-      prev.map(workflow => 
-        workflow.id === id 
+      prev.map(w => 
+        w.id === id 
           ? { 
-              ...workflow, 
-              enabled: !workflow.enabled,
-              status: !workflow.enabled ? "active" : "inactive"
+              ...w, 
+              enabled: !w.enabled,
+              status: !w.enabled ? "active" : "inactive"
             }
-          : workflow
+          : w
       )
     );
+
+    if (!workflow.enabled) {
+      toast({
+        title: "Workflow activado",
+        description: "El workflow premium está ahora activo",
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -152,10 +176,11 @@ export const WorkflowGrid = () => {
                   </Badge>
                 </div>
               </div>
-              <Switch 
-                checked={workflow.enabled}
-                onCheckedChange={() => toggleWorkflow(workflow.id)}
-              />
+                <Switch
+                  checked={workflow.enabled}
+                  onCheckedChange={() => toggleWorkflow(workflow.id)}
+                  disabled={loading}
+                />
             </div>
 
             <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
@@ -187,6 +212,17 @@ export const WorkflowGrid = () => {
                 <Play className="w-4 h-4 mr-2" />
                 Ejecutar
               </Button>
+              {subscribed && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={openCustomerPortal}
+                  disabled={loading}
+                  className="text-xs"
+                >
+                  Gestionar
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="sm"
