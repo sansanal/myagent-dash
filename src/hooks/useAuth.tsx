@@ -71,10 +71,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .from('profiles')
         .select('email_confirmed')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
       
       if (!error && data) {
         setEmailConfirmed(data.email_confirmed === 1);
+      } else {
+        // Si no existe el perfil o hay error, asumimos email no confirmado
+        setEmailConfirmed(false);
       }
     } catch (error) {
       console.error('Error checking email confirmation:', error);
@@ -121,10 +124,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (!error) {
         setEmailConfirmed(true);
+        // Forzar recheck del estado de confirmación
+        await checkEmailConfirmation(user.id);
       }
       
       return { error };
     } catch (error) {
+      console.error('Error confirming email:', error);
       return { error };
     }
   };

@@ -21,6 +21,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const { error } = await confirmEmail();
     if (error) {
       console.error('Error confirming email:', error);
+      alert('Error al confirmar email. Por favor, intenta de nuevo.');
+    } else {
+      alert('Email confirmado exitosamente. Serás redirigido al dashboard.');
     }
   };
 
