@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { Sidebar } from "@/components/Sidebar";
 
 interface AIAgent {
   id: string;
@@ -36,6 +37,7 @@ export const AgentesIA = () => {
   const [agents, setAgents] = useState<AIAgent[]>([]);
   const [executions, setExecutions] = useState<AgentExecution[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAccount, setSelectedAccount] = useState("Cuenta Principal");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -182,191 +184,201 @@ export const AgentesIA = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Agentes IA</h1>
-          <p className="text-muted-foreground">Gestiona y monitorea tus agentes de inteligencia artificial</p>
-        </div>
-        <Button className="bg-gradient-primary text-primary-foreground shadow-glow">
-          <Bot className="w-4 h-4 mr-2" />
-          Crear Agente
-        </Button>
-      </div>
+    <div className="min-h-screen bg-background">
+      <div className="flex">
+        <Sidebar 
+          selectedAccount={selectedAccount}
+          onAccountChange={setSelectedAccount}
+        />
+        <main className="flex-1 p-6 ml-64">
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Agentes IA</h1>
+                <p className="text-muted-foreground">Gestiona y monitorea tus agentes de inteligencia artificial</p>
+              </div>
+              <Button className="bg-gradient-primary text-primary-foreground shadow-glow">
+                <Bot className="w-4 h-4 mr-2" />
+                Crear Agente
+              </Button>
+            </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4 bg-gradient-card border-border/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-primary">
-              <Bot className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total Agentes</p>
-              <p className="text-2xl font-bold text-foreground">{agents.length}</p>
-            </div>
-          </div>
-        </Card>
-        
-        <Card className="p-4 bg-gradient-card border-border/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-success">
-              <Play className="w-5 h-5 text-success-foreground" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Activos</p>
-              <p className="text-2xl font-bold text-foreground">
-                {agents.filter(a => a.status === 'active').length}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 bg-gradient-card border-border/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary">
-              <TrendingUp className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Ejecuciones</p>
-              <p className="text-2xl font-bold text-foreground">{executions.length}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 bg-gradient-card border-border/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-warning">
-              <AlertCircle className="w-5 h-5 text-warning-foreground" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Fallidos</p>
-              <p className="text-2xl font-bold text-foreground">
-                {executions.filter(e => e.status === 'failed').length}
-              </p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Agents Grid */}
-      <div>
-        <h2 className="text-xl font-semibold text-foreground mb-4">Agentes Activos</h2>
-        {agents.length === 0 ? (
-          <Card className="p-8 text-center bg-gradient-card border-border/50">
-            <Bot className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              No hay agentes configurados
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Activa un workflow para crear tu primer agente IA
-            </p>
-            <Button variant="outline">
-              Ir a Workflows
-            </Button>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agents.map((agent) => (
-              <Card 
-                key={agent.id}
-                className="p-6 bg-gradient-card border-border/50 backdrop-blur-sm hover:shadow-card transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-gradient-primary">
-                      <Bot className="w-5 h-5 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">{agent.name}</h3>
-                      <Badge className={`text-xs ${getStatusColor(agent.status)}`}>
-                        {getStatusText(agent.status)}
-                      </Badge>
-                    </div>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="p-4 bg-gradient-card border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-primary">
+                    <Bot className="w-5 h-5 text-primary-foreground" />
                   </div>
-                  <Switch
-                    checked={agent.status === 'active'}
-                    onCheckedChange={() => toggleAgentStatus(agent.id)}
-                  />
-                </div>
-
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                  {agent.description || "Agente de IA automatizado"}
-                </p>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Workflow ID:</span>
-                    <span className="text-foreground font-mono text-xs">{agent.workflow_id}</span>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Agentes</p>
+                    <p className="text-2xl font-bold text-foreground">{agents.length}</p>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Creado:</span>
-                    <span className="text-foreground">
-                      {new Date(agent.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={() => executeAgent(agent.id)}
-                    disabled={agent.status !== 'active'}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Ejecutar
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <Settings className="w-4 h-4" />
-                  </Button>
                 </div>
               </Card>
-            ))}
-          </div>
-        )}
-      </div>
+              
+              <Card className="p-4 bg-gradient-card border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-success">
+                    <Play className="w-5 h-5 text-success-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Activos</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {agents.filter(a => a.status === 'active').length}
+                    </p>
+                  </div>
+                </div>
+              </Card>
 
-      {/* Recent Executions */}
-      <div>
-        <h2 className="text-xl font-semibold text-foreground mb-4">Ejecuciones Recientes</h2>
-        <Card className="bg-gradient-card border-border/50">
-          <div className="p-6">
-            {executions.length === 0 ? (
-              <div className="text-center py-8">
-                <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">No hay ejecuciones recientes</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {executions.slice(0, 10).map((execution) => {
-                  const agent = agents.find(a => a.id === execution.agent_id);
-                  return (
-                    <div key={execution.id} className="flex items-center justify-between p-3 rounded-lg bg-background/30">
-                      <div className="flex items-center gap-3">
-                        <Badge className={`text-xs ${getStatusColor(execution.status)}`}>
-                          {getStatusText(execution.status)}
-                        </Badge>
-                        <span className="text-sm font-medium text-foreground">
-                          {agent?.name || 'Agente eliminado'}
-                        </span>
+              <Card className="p-4 bg-gradient-card border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary">
+                    <TrendingUp className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Ejecuciones</p>
+                    <p className="text-2xl font-bold text-foreground">{executions.length}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 bg-gradient-card border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-warning">
+                    <AlertCircle className="w-5 h-5 text-warning-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Fallidos</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {executions.filter(e => e.status === 'failed').length}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Agents Grid */}
+            <div>
+              <h2 className="text-xl font-semibold text-foreground mb-4">Agentes Activos</h2>
+              {agents.length === 0 ? (
+                <Card className="p-8 text-center bg-gradient-card border-border/50">
+                  <Bot className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    No hay agentes configurados
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Activa un workflow para crear tu primer agente IA
+                  </p>
+                  <Button variant="outline">
+                    Ir a Workflows
+                  </Button>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {agents.map((agent) => (
+                    <Card 
+                      key={agent.id}
+                      className="p-6 bg-gradient-card border-border/50 backdrop-blur-sm hover:shadow-card transition-all duration-300"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gradient-primary">
+                            <Bot className="w-5 h-5 text-primary-foreground" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-foreground">{agent.name}</h3>
+                            <Badge className={`text-xs ${getStatusColor(agent.status)}`}>
+                              {getStatusText(agent.status)}
+                            </Badge>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={agent.status === 'active'}
+                          onCheckedChange={() => toggleAgentStatus(agent.id)}
+                        />
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(execution.created_at).toLocaleString()}
+
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {agent.description || "Agente de IA automatizado"}
+                      </p>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Workflow ID:</span>
+                          <span className="text-foreground font-mono text-xs">{agent.workflow_id}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Creado:</span>
+                          <span className="text-foreground">
+                            {new Date(agent.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
+
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1"
+                          onClick={() => executeAgent(agent.id)}
+                          disabled={agent.status !== 'active'}
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Ejecutar
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <Settings className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Recent Executions */}
+            <div>
+              <h2 className="text-xl font-semibold text-foreground mb-4">Ejecuciones Recientes</h2>
+              <Card className="bg-gradient-card border-border/50">
+                <div className="p-6">
+                  {executions.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No hay ejecuciones recientes</p>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  ) : (
+                    <div className="space-y-3">
+                      {executions.slice(0, 10).map((execution) => {
+                        const agent = agents.find(a => a.id === execution.agent_id);
+                        return (
+                          <div key={execution.id} className="flex items-center justify-between p-3 rounded-lg bg-background/30">
+                            <div className="flex items-center gap-3">
+                              <Badge className={`text-xs ${getStatusColor(execution.status)}`}>
+                                {getStatusText(execution.status)}
+                              </Badge>
+                              <span className="text-sm font-medium text-foreground">
+                                {agent?.name || 'Agente eliminado'}
+                              </span>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {new Date(execution.created_at).toLocaleString()}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
           </div>
-        </Card>
+        </main>
       </div>
     </div>
   );
