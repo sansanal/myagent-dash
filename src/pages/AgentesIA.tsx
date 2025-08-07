@@ -404,15 +404,9 @@ export const AgentesIA = () => {
         <main className="flex-1 p-6 ml-64">
           <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Agentes IA</h1>
-                <p className="text-muted-foreground">Gestiona y monitorea tus agentes de inteligencia artificial</p>
-              </div>
-              <Button className="bg-gradient-primary text-primary-foreground shadow-glow">
-                <Bot className="w-4 h-4 mr-2" />
-                Crear Agente
-              </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Agentes IA</h1>
+              <p className="text-muted-foreground">Gestiona y monitorea tus agentes de inteligencia artificial</p>
             </div>
 
             {/* Stats Cards */}
