@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { usePayment } from '@/hooks/usePayment';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CreditCard } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,6 +12,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading, emailConfirmed, confirmEmail } = useAuth();
+  const { hasPaymentMethod, loading: paymentLoading, setupPaymentMethod, refreshPaymentStatus } = usePayment();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -59,7 +62,31 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     }
   }, [user, emailConfirmed, loading]);
 
-  if (loading) {
+  const handleSetupPayment = async () => {
+    try {
+      await setupPaymentMethod();
+      toast({
+        title: "Redirigiendo a Stripe",
+        description: "Se abrirá una nueva ventana para configurar tu tarjeta",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error al configurar el método de pago",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRefreshPayment = async () => {
+    await refreshPaymentStatus();
+    toast({
+      title: "Estado actualizado",
+      description: "Se ha verificado el estado de tu método de pago",
+    });
+  };
+
+  if (loading || paymentLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -90,6 +117,40 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           >
             Confirmar Email
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasPaymentMethod) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-6 max-w-md mx-auto p-6">
+          <div className="space-y-2">
+            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <CreditCard className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground">Configurar método de pago</h2>
+            <p className="text-muted-foreground">
+              Para acceder a la plataforma necesitas configurar un método de pago. Es seguro y fácil.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <Button 
+              onClick={handleSetupPayment}
+              className="w-full bg-gradient-to-r from-primary to-primary/80"
+            >
+              <CreditCard className="mr-2 h-4 w-4" />
+              Configurar Tarjeta
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleRefreshPayment}
+              className="w-full"
+            >
+              Verificar Estado
+            </Button>
+          </div>
         </div>
       </div>
     );
