@@ -3,8 +3,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePayment } from "@/hooks/usePayment";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { PaymentDrawer } from "@/components/PaymentDrawer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate, useLocation } from "react-router-dom";
+ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +24,7 @@ export const AppSidebar = () => {
   const { signOut, user } = useAuth();
   const { hasPaymentMethod, setupPaymentMethod, refreshPaymentStatus } = usePayment();
   const { toast } = useToast();
+  const [openPayment, setOpenPayment] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { open } = useSidebar();
@@ -121,7 +124,7 @@ export const AppSidebar = () => {
           <SidebarGroup>
             <SidebarGroupContent>
               <div className="px-3 py-2">
-                <Card className="border-border/50">
+                <Card className="border-border/50 cursor-pointer" onClick={() => setOpenPayment(true)}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center space-x-2">
                       <CreditCard className="h-4 w-4 text-primary" />
@@ -137,20 +140,20 @@ export const AppSidebar = () => {
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
                     {hasPaymentMethod ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleRefreshPayment}
-                        className="w-full text-xs"
-                      >
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         onClick={(e) => { e.stopPropagation(); handleRefreshPayment(); }}
+                         className="w-full text-xs"
+                       >
                         Verificar Estado
                       </Button>
                     ) : (
-                      <Button
-                        size="sm"
-                        onClick={handleSetupPayment}
-                        className="w-full text-xs bg-gradient-to-r from-primary to-primary/80"
-                      >
+                       <Button
+                         size="sm"
+                         onClick={(e) => { e.stopPropagation(); handleSetupPayment(); }}
+                         className="w-full text-xs bg-gradient-to-r from-primary to-primary/80"
+                       >
                         <CreditCard className="h-3 w-3 mr-1" />
                         Configurar Tarjeta
                       </Button>
@@ -161,9 +164,11 @@ export const AppSidebar = () => {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
-      </SidebarContent>
+       </SidebarContent>
 
-      <SidebarFooter>
+       <PaymentDrawer open={openPayment} onOpenChange={setOpenPayment} />
+ 
+       <SidebarFooter>
         <div className="p-3 border-t border-border/50">
           <div className={`flex items-center ${open ? 'justify-between' : 'justify-center'} p-3 rounded-lg bg-background/30`}>
             {open && (

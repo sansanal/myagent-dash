@@ -49,3 +49,12 @@ verify_jwt = true
 
 [functions.customer-portal]
 verify_jwt = true
+
+[functions.list-payment-methods]
+verify_jwt = true
+
+[functions.set-default-payment-method]
+verify_jwt = true
+
+[functions.get-billing-summary]
+verify_jwt = true
