@@ -11,6 +11,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AppSidebar } from "@/components/AppSidebar";
 import { CreditCard, Plus, Loader2 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface PaymentMethodItem {
   id: string;
@@ -95,6 +96,13 @@ const Billing = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.access_token]);
 
+  // Refresh payment methods when returning from Stripe (tab focus)
+  useEffect(() => {
+    const onFocus = () => fetchData();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
+
   const handleSetDefault = async (payment_method_id: string) => {
     if (!session) return;
     setUpdating(true);
@@ -159,25 +167,31 @@ const Billing = () => {
                         </CardContent>
                       </Card>
                     ) : (
-                      paymentMethods.map((pm) => (
-                        <Card key={pm.id} className="border-border/60">
-                          <CardHeader className="py-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                              <CreditCard className="h-4 w-4 text-primary" />
-                              {pm.brand?.toUpperCase()} •••• {pm.last4}
-                              {pm.is_default && <Badge variant="secondary">Predeterminada</Badge>}
-                            </CardTitle>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-muted-foreground">Exp. {pm.exp_month}/{pm.exp_year}</span>
-                              {!pm.is_default && (
-                                <Button size="sm" variant="outline" onClick={() => handleSetDefault(pm.id)} disabled={updating}>
-                                  {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Hacer predeterminada"}
-                                </Button>
-                              )}
-                            </div>
-                          </CardHeader>
-                        </Card>
-                      ))
+                      <RadioGroup
+                        value={defaultPmId ?? undefined}
+                        onValueChange={(val) => {
+                          if (val && val !== defaultPmId) handleSetDefault(val);
+                        }}
+                        className="space-y-2"
+                      >
+                        {paymentMethods.map((pm) => (
+                          <Card key={pm.id} className="border-border/60">
+                            <CardHeader className="py-3 flex flex-row items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <RadioGroupItem id={`pm-${pm.id}`} value={pm.id} />
+                                <CardTitle className="text-sm flex items-center gap-2">
+                                  <CreditCard className="h-4 w-4 text-primary" />
+                                  {pm.brand?.toUpperCase()} •••• {pm.last4}
+                                  {pm.is_default && <Badge variant="secondary">Predeterminada</Badge>}
+                                </CardTitle>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">Exp. {pm.exp_month}/{pm.exp_year}</span>
+                              </div>
+                            </CardHeader>
+                          </Card>
+                        ))}
+                      </RadioGroup>
                     )}
                   </div>
                 )}
