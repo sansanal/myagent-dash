@@ -44,6 +44,12 @@ interface SubscriptionSummary {
   current_period_end: string | null;
 }
 
+interface StripeCustomer {
+  id: string;
+  email?: string | null;
+  name?: string | null;
+}
+
 const Billing = () => {
   const { session } = useAuth();
   const { setupPaymentMethod } = usePayment();
@@ -55,6 +61,7 @@ const Billing = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>([]);
   const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
   const [subscription, setSubscription] = useState<SubscriptionSummary | null>(null);
+  const [customer, setCustomer] = useState<StripeCustomer | null>(null);
 
   const defaultPmId = useMemo(() => paymentMethods.find((pm) => pm.is_default)?.id || null, [paymentMethods]);
 
@@ -78,6 +85,7 @@ const Billing = () => {
       setPaymentMethods(list);
       setInvoices(billingData?.invoices || []);
       setSubscription(billingData?.subscription || null);
+      setCustomer(billingData?.customer || null);
 
       // Garantizar que siempre haya una tarjeta predeterminada
       if (list.length > 0 && !list.some((p) => p.is_default)) {
@@ -149,6 +157,28 @@ const Billing = () => {
           </header>
           <div className="flex-1 p-6">
             <div className="space-y-6">
+              <section>
+                <h3 className="text-sm font-medium text-foreground mb-3">Cuenta de Stripe</h3>
+                <Card>
+                  <CardContent className="py-4 text-sm">
+                    {customer ? (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <div className="text-muted-foreground">Email</div>
+                          <div className="font-medium">{customer.email || '-'}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Customer ID</div>
+                          <div className="font-medium">{customer.id}</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-muted-foreground">No se encontró cuenta de Stripe asociada.</div>
+                    )}
+                  </CardContent>
+                </Card>
+              </section>
+
               <section>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-medium text-foreground">Métodos de pago</h3>

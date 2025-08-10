@@ -48,10 +48,12 @@ serve(async (req) => {
       return new Response(JSON.stringify({
         subscription: null,
         invoices: [],
+        customer: null,
       }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
     }
 
-    const customerId = customers.data[0].id;
+    const customer = customers.data[0];
+    const customerId = customer.id;
     logStep("Found Stripe customer", { customerId });
 
     // Subscription info
@@ -92,7 +94,11 @@ serve(async (req) => {
         : null,
     }));
 
-    return new Response(JSON.stringify({ subscription: subscriptionSummary, invoices: invoicesMapped }), {
+    return new Response(JSON.stringify({ subscription: subscriptionSummary, invoices: invoicesMapped, customer: {
+      id: customer.id,
+      email: customer.email ?? null,
+      name: customer.name ?? null,
+    } }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
