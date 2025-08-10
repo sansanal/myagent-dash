@@ -10,8 +10,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AppSidebar } from "@/components/AppSidebar";
-import { CreditCard, Plus, Loader2 } from "lucide-react";
+import { CreditCard, Plus, Loader2, Trash2, Star } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface PaymentMethodItem {
   id: string;
@@ -62,6 +63,8 @@ const Billing = () => {
   const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
   const [subscription, setSubscription] = useState<SubscriptionSummary | null>(null);
   const [customer, setCustomer] = useState<StripeCustomer | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pmToDelete, setPmToDelete] = useState<string | null>(null);
 
   const defaultPmId = useMemo(() => paymentMethods.find((pm) => pm.is_default)?.id || null, [paymentMethods]);
 
@@ -137,6 +140,27 @@ const Billing = () => {
     } catch (e: any) {
       console.error(e);
       toast({ title: "Error", description: "No se pudo iniciar el alta de tarjeta.", variant: "destructive" });
+    }
+  };
+  
+  const handleDelete = async () => {
+    if (!session || !pmToDelete) return;
+    setUpdating(true);
+    try {
+      const { error } = await supabase.functions.invoke("delete-payment-method", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { payment_method_id: pmToDelete },
+      });
+      if (error) throw error;
+      toast({ title: "Eliminado", description: "Método de pago eliminado." });
+      setConfirmOpen(false);
+      setPmToDelete(null);
+      await fetchData();
+    } catch (e: any) {
+      console.error(e);
+      toast({ title: "Error", description: "No se pudo eliminar la tarjeta.", variant: "destructive" });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -215,9 +239,17 @@ const Billing = () => {
                                   {pm.is_default && <Badge variant="secondary">Predeterminada</Badge>}
                                 </CardTitle>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">Exp. {pm.exp_month}/{pm.exp_year}</span>
-                              </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-muted-foreground">Exp. {pm.exp_month}/{pm.exp_year}</span>
+                                  {!pm.is_default && (
+                                    <Button variant="outline" size="sm" onClick={() => handleSetDefault(pm.id)} disabled={updating}>
+                                      <Star className="h-3.5 w-3.5 mr-1" /> Predeterminada
+                                    </Button>
+                                  )}
+                                  <Button variant="destructive" size="sm" onClick={() => { setPmToDelete(pm.id); setConfirmOpen(true); }} disabled={updating}>
+                                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Eliminar
+                                  </Button>
+                                </div>
                             </CardHeader>
                           </Card>
                         ))}
@@ -296,6 +328,23 @@ const Billing = () => {
                   </div>
                 )}
               </section>
+              <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Eliminar método de pago</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta acción eliminará la tarjeta seleccionada de tu cuenta de Stripe. ¿Deseas continuar?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} disabled={updating}>
+                      {updating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                      Eliminar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </main>
