@@ -246,7 +246,13 @@ const Billing = () => {
                                       <Star className="h-3.5 w-3.5 mr-1" /> Predeterminada
                                     </Button>
                                   )}
-                                  <Button variant="destructive" size="sm" onClick={() => { setPmToDelete(pm.id); setConfirmOpen(true); }} disabled={updating}>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => { setPmToDelete(pm.id); setConfirmOpen(true); }}
+                                    disabled={updating || paymentMethods.length <= 1}
+                                    title={paymentMethods.length <= 1 ? "Debes mantener al menos una tarjeta guardada" : undefined}
+                                  >
                                     <Trash2 className="h-3.5 w-3.5 mr-1" /> Eliminar
                                   </Button>
                                 </div>

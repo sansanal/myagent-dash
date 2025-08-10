@@ -52,6 +52,15 @@ serve(async (req) => {
     const customer = customers.data[0];
     logStep("Found Stripe customer", { customerId: customer.id });
 
+    // Ensure there's more than one payment method before allowing deletion
+    const methods = await stripe.paymentMethods.list({ customer: customer.id, type: 'card' });
+    if (methods.data.length <= 1) {
+      return new Response(JSON.stringify({ error: "No puedes eliminar tu única tarjeta guardada." }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     // Retrieve the payment method to ensure it belongs to the customer
     const pm = await stripe.paymentMethods.retrieve(payment_method_id);
     if (pm.customer && pm.customer !== customer.id) {
