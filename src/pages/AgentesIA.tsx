@@ -647,7 +647,7 @@ export const AgentesIA = () => {
 
               {/* Agents Grid */}
               <div>
-                <h2 className="text-xl font-semibold text-foreground mb-4">Agentes Activos</h2>
+                
                 {agents.length === 0 ? (
                   <Card className="p-8 text-center bg-gradient-card border-border/50">
                     <Bot className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
