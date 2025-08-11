@@ -666,7 +666,7 @@ export const AgentesIA = () => {
 
               {/* Recent Executions */}
               <div>
-                <h2 className="text-xl font-semibold text-foreground mb-4">Ejecuciones Recientes</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">Ejecuciones recientes</h2>
                 <Card className="bg-gradient-card border-border/50">
                   <div className="p-6">
                     {executions.length === 0 ? (
