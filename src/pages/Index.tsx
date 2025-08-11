@@ -1,13 +1,13 @@
-import { useState } from "react";
+
 import { AppSidebar } from "@/components/AppSidebar";
 import { WorkflowGrid } from "@/components/WorkflowGrid";
-import { DashboardHeader } from "@/components/DashboardHeader";
+
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
-  const [selectedAccount, setSelectedAccount] = useState("Cuenta Principal");
+  
   const isMobile = useIsMobile();
 
   return (
@@ -20,7 +20,7 @@ const Index = () => {
             <h2 className="text-lg font-semibold">Dashboard</h2>
           </header>
           <div className="flex-1 p-6">
-            <DashboardHeader selectedAccount={selectedAccount} />
+            
             <WorkflowGrid />
           </div>
         </main>
