@@ -62,7 +62,7 @@ export const AgentesIA = () => {
   const [executions, setExecutions] = useState<AgentExecution[]>([]);
   const [loading, setLoading] = useState(true);
   
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { subscribed, createCheckout, loading: subscriptionLoading } = useSubscription();
   const isMobile = useIsMobile();
   
@@ -134,6 +134,16 @@ export const AgentesIA = () => {
       enabled: false
     }
   ]);
+
+  // Mapear cada workflow a su Stripe Price ID (rellenar con tus IDs reales)
+  const priceIds: Record<string, string> = {
+    "1": "", // Clasificación de Emails
+    "2": "", // Generación de Contenido
+    "3": "", // Análisis de Sentimientos
+    "4": "", // Chat Support Bot
+    "5": "", // Backup Inteligente
+    "6": "", // Programador de Reuniones
+  };
 
   useEffect(() => {
     if (user) {
@@ -272,94 +282,89 @@ export const AgentesIA = () => {
     const workflow = workflows.find(w => w.id === id);
     if (!workflow) return;
 
-    // If trying to enable ANY workflow and user is not subscribed, show subscription requirement
-    if (!workflow.enabled && !subscribed) {
+    const priceId = priceIds[id];
+    if (!priceId) {
       toast({
-        title: "Suscripción Premium Requerida",
-        description: "Con €150/mes obtienes acceso a TODOS los workflows premium. ¿Quieres suscribirte?",
-        action: (
-          <Button onClick={createCheckout} disabled={subscriptionLoading}>
-            Suscribirse €150/mes
-          </Button>
-        ),
+        title: "Configurar precio",
+        description: `Falta configurar el Price ID de Stripe para ${workflow.name}`,
+        variant: "destructive",
       });
       return;
     }
 
-    // If subscribed, allow enabling/disabling any workflow freely
-    if (subscribed) {
+    // Actualiza estado visual inmediato
+    setWorkflows(prev => 
+      prev.map(w => 
+        w.id === id 
+          ? { 
+              ...w, 
+              enabled: !w.enabled,
+              status: !w.enabled ? "active" : "inactive"
+            }
+          : w
+      )
+    );
+
+    try {
+      // Llamar a Edge Function para gestionar item de suscripción
+      const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined;
+      const action = !workflow.enabled ? 'activate' : 'deactivate';
+      const { error } = await supabase.functions.invoke('manage-workflow-subscription', {
+        headers,
+        body: { action, price_id: priceId },
+      });
+      if (error) throw error;
+
+      if (!workflow.enabled) {
+        // Crear agente en BD
+        const { error: insertError } = await supabase
+          .from('ai_agents')
+          .insert({
+            user_id: user?.id,
+            name: workflow.name,
+            description: workflow.description,
+            workflow_id: workflow.id,
+            status: 'active',
+            configuration: {
+              category: workflow.category,
+              executions: workflow.executions
+            }
+          });
+        if (insertError) throw insertError;
+
+        toast({ title: "Workflow activado", description: "Se añadió el ítem en Stripe y se creó el agente." });
+        fetchAgents();
+      } else {
+        // Desactivar agente en BD
+        const { error: updateError } = await supabase
+          .from('ai_agents')
+          .update({ status: 'inactive' })
+          .eq('workflow_id', workflow.id)
+          .eq('user_id', user?.id);
+        if (updateError) throw updateError;
+
+        toast({ title: "Workflow desactivado", description: "Se desactivó el ítem en Stripe (sin prorrateo)." });
+        fetchAgents();
+      }
+    } catch (error) {
+      console.error('Error managing workflow subscription:', error);
+      // revertir cambio local si falla
       setWorkflows(prev => 
         prev.map(w => 
           w.id === id 
             ? { 
                 ...w, 
-                enabled: !w.enabled,
-                status: !w.enabled ? "active" : "inactive"
+                enabled: workflow.enabled,
+                status: workflow.status
               }
             : w
         )
       );
-
-      // If enabling workflow, create AI agent
-      if (!workflow.enabled) {
-        try {
-          const { error } = await supabase
-            .from('ai_agents')
-            .insert({
-              user_id: user?.id,
-              name: workflow.name,
-              description: workflow.description,
-              workflow_id: workflow.id,
-              status: 'active',
-              configuration: {
-                category: workflow.category,
-                executions: workflow.executions
-              }
-            });
-
-          if (error) throw error;
-
-          toast({
-            title: "Workflow activado",
-            description: "El agente IA ha sido creado exitosamente",
-          });
-
-          // Refresh agents list
-          fetchAgents();
-        } catch (error) {
-          console.error('Error creating AI agent:', error);
-          toast({
-            title: "Error",
-            description: "No se pudo crear el agente IA",
-            variant: "destructive",
-          });
-        }
-      } else {
-        // If disabling workflow, update agent status in database
-        try {
-          const { error } = await supabase
-            .from('ai_agents')
-            .update({ status: 'inactive' })
-            .eq('workflow_id', workflow.id)
-            .eq('user_id', user?.id);
-
-          if (error) throw error;
-
-          toast({
-            title: "Workflow desactivado",
-            description: "El workflow se ha desactivado",
-          });
-
-          // Refresh agents list
-          fetchAgents();
-        } catch (error) {
-          console.error('Error updating agent status:', error);
-          toast({
-            title: "Workflow desactivado",
-            description: "El workflow se ha desactivado",
-          });
-        }
-      }
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la suscripción en Stripe",
+        variant: "destructive",
+      });
     }
   };
 
