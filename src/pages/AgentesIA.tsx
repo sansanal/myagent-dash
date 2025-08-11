@@ -503,6 +503,9 @@ export const AgentesIA = () => {
               {/* Workflows Section */}
               <div>
                 <h2 className="text-xl font-semibold text-foreground mb-4">Workflows Disponibles</h2>
+                {pricesLoading && (
+                  <div className="mb-3 text-sm text-muted-foreground">Preparando precios de Stripe...</div>
+                )}
                 <div className="bg-gradient-card border border-border/50 rounded-lg overflow-hidden">
                   <Table>
                     <TableHeader>
@@ -544,7 +547,7 @@ export const AgentesIA = () => {
                             <Switch
                               checked={workflow.enabled}
                               onCheckedChange={() => toggleWorkflow(workflow.id)}
-                              disabled={subscriptionLoading}
+                              disabled={subscriptionLoading || pricesLoading || !priceIds[workflow.id]}
                             />
                           </TableCell>
                           <TableCell>
