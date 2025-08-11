@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { usePayment } from '@/hooks/usePayment';
@@ -15,6 +15,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { hasPaymentMethod, loading: paymentLoading, setupPaymentMethod, refreshPaymentStatus } = usePayment();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [paymentPromptShown, setPaymentPromptShown] = useState(false);
+  const promptKey = user ? `pm_prompt_shown_${user.id}` : 'pm_prompt_shown';
 
   useEffect(() => {
     if (!loading && !user) {
@@ -62,6 +64,14 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     }
   }, [user, emailConfirmed, loading]);
 
+  // Mostrar aviso de método de pago solo una vez por sesión de login
+  useEffect(() => {
+    if (user) {
+      const shown = sessionStorage.getItem(promptKey) === '1';
+      setPaymentPromptShown(shown);
+    }
+  }, [user, promptKey]);
+
   const handleSetupPayment = async () => {
     try {
       await setupPaymentMethod();
@@ -84,6 +94,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       title: "Estado actualizado",
       description: "Se ha verificado el estado de tu método de pago",
     });
+  };
+
+  const handleSkipForNow = () => {
+    sessionStorage.setItem(promptKey, '1');
+    setPaymentPromptShown(true);
+    toast({ title: "Continuar sin tarjeta", description: "Puedes añadirla en Facturación cuando quieras." });
   };
 
   if (loading || paymentLoading) {
@@ -122,7 +138,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  if (!hasPaymentMethod) {
+  if (!hasPaymentMethod && !paymentPromptShown) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-6 max-w-md mx-auto p-6">
@@ -149,6 +165,13 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
               className="w-full"
             >
               Verificar Estado
+            </Button>
+            <Button 
+              variant="ghost"
+              onClick={handleSkipForNow}
+              className="w-full"
+            >
+              Continuar sin configurar ahora
             </Button>
           </div>
         </div>
