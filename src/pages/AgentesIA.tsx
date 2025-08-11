@@ -20,6 +20,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { DashboardStats } from "@/components/DashboardStats";
@@ -138,6 +148,20 @@ export const AgentesIA = () => {
   // IDs de precio de Stripe por workflow (se autogeneran/aseguran desde el servidor)
   const [priceIds, setPriceIds] = useState<Record<string, string>>({});
   const [pricesLoading, setPricesLoading] = useState(false);
+
+  // Confirmación de activación
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingWorkflowId, setPendingWorkflowId] = useState<string | null>(null);
+
+  // Mapeo local de precios en céntimos (EUR/mes)
+  const workflowPricesCents: Record<string, number> = {
+    '1': 9900,
+    '2': 29900,
+    '3': 9900,
+    '4': 14900,
+    '5': 9900,
+    '6': 14900,
+  };
 
   const ensureStripePrices = async () => {
     try {
@@ -398,6 +422,27 @@ export const AgentesIA = () => {
     }
   };
 
+  const formatPrice = (cents: number) =>
+    (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+
+  const handleToggleClick = (id: string) => {
+    const wf = workflows.find(w => w.id === id);
+    if (!wf) return;
+    if (!wf.enabled) {
+      setPendingWorkflowId(id);
+      setConfirmOpen(true);
+    } else {
+      toggleWorkflow(id);
+    }
+  };
+
+  const confirmActivate = async () => {
+    if (!pendingWorkflowId) return;
+    await toggleWorkflow(pendingWorkflowId);
+    setConfirmOpen(false);
+    setPendingWorkflowId(null);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active": return "bg-success text-success-foreground";
@@ -546,7 +591,7 @@ export const AgentesIA = () => {
                           <TableCell>
                             <Switch
                               checked={workflow.enabled}
-                              onCheckedChange={() => toggleWorkflow(workflow.id)}
+                              onCheckedChange={() => handleToggleClick(workflow.id)}
                               disabled={subscriptionLoading || pricesLoading || !priceIds[workflow.id]}
                             />
                           </TableCell>
@@ -575,6 +620,29 @@ export const AgentesIA = () => {
                     </TableBody>
                   </Table>
                 </div>
+
+                <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar activación</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {(() => {
+                          const wf = workflows.find(w => w.id === (pendingWorkflowId || ''));
+                          const cents = pendingWorkflowId ? (workflowPricesCents[pendingWorkflowId] || 0) : 0;
+                          return (
+                            <span>
+                              Vas a activar "{wf?.name}". Precio: {formatPrice(cents)} al mes.
+                            </span>
+                          );
+                        })()}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setConfirmOpen(false)}>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={confirmActivate}>Confirmar y activar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
 
               {/* Agents Grid */}
