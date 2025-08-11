@@ -661,52 +661,7 @@ export const AgentesIA = () => {
                       Ir a Workflows
                     </Button>
                   </Card>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {agents.map((agent) => (
-                      <Card 
-                        key={agent.id}
-                        className="p-6 bg-gradient-card border-border/50 backdrop-blur-sm hover:shadow-card transition-all duration-300"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-gradient-primary">
-                              <Bot className="w-5 h-5 text-primary-foreground" />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-foreground">{agent.name}</h3>
-                              <Badge className={`text-xs ${getStatusColor(agent.status)}`}>
-                                {getStatusText(agent.status)}
-                              </Badge>
-                            </div>
-                          </div>
-                          <Switch
-                            checked={agent.status === 'active'}
-                            onCheckedChange={() => toggleAgentStatus(agent.id)}
-                          />
-                        </div>
-
-                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                          {agent.description || "Agente de IA automatizado"}
-                        </p>
-
-                        <div className="space-y-2 mb-4">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Workflow ID:</span>
-                            <span className="text-foreground font-mono text-xs">{agent.workflow_id}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Creado:</span>
-                            <span className="text-foreground">
-                              {new Date(agent.created_at).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-
-                      </Card>
-                    ))}
-                  </div>
-                )}
+                ) : null}
               </div>
 
               {/* Recent Executions */}
