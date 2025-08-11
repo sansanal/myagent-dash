@@ -22,6 +22,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscription } from "@/hooks/useSubscription";
+import { DashboardStats } from "@/components/DashboardStats";
 
 interface AIAgent {
   id: string;
@@ -408,6 +409,7 @@ export const AgentesIA = () => {
           </header>
           <div className="flex-1 p-6">
             <div className="space-y-6">
+              <DashboardStats />
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="p-4 bg-gradient-card border-border/50">

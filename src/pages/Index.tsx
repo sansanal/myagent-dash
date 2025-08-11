@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { WorkflowGrid } from "@/components/WorkflowGrid";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { DashboardStats } from "@/components/DashboardStats";
+
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -21,7 +21,6 @@ const Index = () => {
           </header>
           <div className="flex-1 p-6">
             <DashboardHeader selectedAccount={selectedAccount} />
-            <DashboardStats />
             <WorkflowGrid />
           </div>
         </main>
