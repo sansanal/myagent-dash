@@ -547,7 +547,7 @@ export const AgentesIA = () => {
 
               {/* Workflows Section */}
               <div>
-                <h2 className="text-xl font-semibold text-foreground mb-4">Workflows Disponibles</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">Workflows disponibles</h2>
                 {pricesLoading && (
                   <div className="mb-3 text-sm text-muted-foreground">Preparando precios de Stripe...</div>
                 )}
