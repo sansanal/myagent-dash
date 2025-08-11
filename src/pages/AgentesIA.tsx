@@ -135,15 +135,45 @@ export const AgentesIA = () => {
     }
   ]);
 
-  // Mapear cada workflow a su Stripe Price ID (rellenar con tus IDs reales)
-  const priceIds: Record<string, string> = {
-    "1": "", // Clasificación de Emails
-    "2": "", // Generación de Contenido
-    "3": "", // Análisis de Sentimientos
-    "4": "", // Chat Support Bot
-    "5": "", // Backup Inteligente
-    "6": "", // Programador de Reuniones
+  // IDs de precio de Stripe por workflow (se autogeneran/aseguran desde el servidor)
+  const [priceIds, setPriceIds] = useState<Record<string, string>>({});
+  const [pricesLoading, setPricesLoading] = useState(false);
+
+  const ensureStripePrices = async () => {
+    try {
+      setPricesLoading(true);
+      const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined;
+      const workflowsPayload = [
+        { id: '1', name: 'Clasificación de Emails', amount_cents: 9900 },
+        { id: '2', name: 'Generación de Contenido', amount_cents: 29900 },
+        { id: '3', name: 'Análisis de Sentimientos', amount_cents: 9900 },
+        { id: '4', name: 'Chat Support Bot', amount_cents: 14900 },
+        { id: '5', name: 'Backup Inteligente', amount_cents: 9900 },
+        { id: '6', name: 'Programador de Reuniones', amount_cents: 14900 },
+      ];
+      const { data, error } = await supabase.functions.invoke('ensure-stripe-prices', {
+        headers,
+        body: { workflows: workflowsPayload },
+      });
+      if (error) throw error;
+      setPriceIds(data?.priceIds || {});
+    } catch (error) {
+      console.error('Error ensuring Stripe prices:', error);
+      toast({
+        title: 'Error con Stripe',
+        description: 'No se pudieron preparar los precios. Intenta de nuevo.',
+        variant: 'destructive',
+      });
+    } finally {
+      setPricesLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (session) {
+      ensureStripePrices();
+    }
+  }, [session]);
 
   useEffect(() => {
     if (user) {
