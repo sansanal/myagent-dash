@@ -703,25 +703,6 @@ export const AgentesIA = () => {
                           </div>
                         </div>
 
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="flex-1"
-                            onClick={() => executeAgent(agent.id)}
-                            disabled={agent.status !== 'active'}
-                          >
-                            <Play className="w-4 h-4 mr-2" />
-                            Ejecutar
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            className="text-muted-foreground hover:text-foreground"
-                          >
-                            <Settings className="w-4 h-4" />
-                          </Button>
-                        </div>
                       </Card>
                     ))}
                   </div>
