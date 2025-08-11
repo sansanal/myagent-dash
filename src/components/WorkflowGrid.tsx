@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
 import { Badge } from "@/components/ui/badge";
 import { 
   Bot, Mail, MessageSquare, Database, Calendar, 
-  FileText, TrendingUp, Settings 
+  FileText, TrendingUp
 } from "lucide-react";
 
 interface Workflow {
@@ -154,15 +154,6 @@ export const WorkflowGrid = () => {
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Settings className="w-4 h-4" />
-              </Button>
-            </div>
           </Card>
         ))}
       </div>
