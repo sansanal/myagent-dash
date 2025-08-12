@@ -1,6 +1,7 @@
 import { Bot, Workflow, BarChart3, Settings, Users, LogOut, CreditCard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useRoles } from "@/hooks/useRoles";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -21,7 +22,8 @@ export const AppSidebar = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const { open } = useSidebar();
+const { open } = useSidebar();
+  const { hasRole } = useRoles();
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -35,13 +37,19 @@ export const AppSidebar = () => {
   };
 
   
-  const menuItems = [
+  const baseItems = [
     { icon: Workflow, label: "Workflows", path: "/dashboard" },
     { icon: Bot, label: "Digital workers", path: "/agents" },
     { icon: CreditCard, label: "Facturación", path: "/billing" },
     { icon: BarChart3, label: "Analytics", path: "/analytics" },
     { icon: Users, label: "Equipos", path: "/equipos" },
     { icon: Settings, label: "Configuración", path: "/configuracion" },
+  ];
+
+  const menuItems = [
+    ...baseItems.slice(0, 3),
+    ...(hasRole("superadmin") ? [{ icon: Users, label: "Usuarios activos", path: "/usuarios-activos" }] : []),
+    ...baseItems.slice(3),
   ];
 
   const isActive = (path: string) => location.pathname === path;
