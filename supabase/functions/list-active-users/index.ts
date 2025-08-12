@@ -37,7 +37,7 @@ serve(async (req) => {
     const user = userData.user;
     if (!user) throw new Error("User not authenticated");
 
-    // Verify superadmin role
+    // Verify superadmin role (avoid RLS by using service role explicitly)
     const { data: roles, error: rolesError } = await supabaseService
       .from("user_roles")
       .select("role")

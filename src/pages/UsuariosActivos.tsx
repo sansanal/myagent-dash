@@ -19,8 +19,9 @@ export default function UsuariosActivos() {
   const [data, setData] = useState<ActiveUserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { hasRole, loading: rolesLoading } = useRoles();
+  const { hasRole, loading: rolesLoading, roles } = useRoles();
   const isMobile = useIsMobile();
+  const [fetched, setFetched] = useState(false);
   useEffect(() => {
     // SEO basics
     document.title = "Usuarios activos | Superadmin";
@@ -41,11 +42,14 @@ export default function UsuariosActivos() {
         setData([]);
       } finally {
         setLoading(false);
+        setFetched(true);
       }
     };
 
-    if (hasRole("superadmin")) fetchData();
-  }, [hasRole]);
+    if (!rolesLoading && hasRole("superadmin") && !fetched) {
+      fetchData();
+    }
+  }, [rolesLoading, hasRole, fetched]);
 
   const formatPrice = useMemo(() => (cents: number, currency?: string | null) => {
     if (!currency || !cents) return "-";
@@ -59,7 +63,33 @@ export default function UsuariosActivos() {
     }
   }, []);
 
-  if (!rolesLoading && !hasRole("superadmin")) {
+  if (rolesLoading) {
+    return (
+      <SidebarProvider defaultOpen={!isMobile}>
+        <div className="min-h-screen bg-background flex w-full">
+          <AppSidebar />
+          <main className="flex-1 flex flex-col">
+            <header className="h-12 flex items-center border-b border-border/50 px-4">
+              <SidebarTrigger className="mr-4" />
+              <h2 className="text-lg font-semibold">Usuarios activos</h2>
+            </header>
+            <div className="flex-1 p-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cargando...</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Cargando roles...</p>
+                </CardContent>
+              </Card>
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  if (!hasRole("superadmin")) {
     return (
       <SidebarProvider defaultOpen={!isMobile}>
         <div className="min-h-screen bg-background flex w-full">
