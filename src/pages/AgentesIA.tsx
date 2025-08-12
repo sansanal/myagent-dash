@@ -485,7 +485,7 @@ export const AgentesIA = () => {
         <main className="flex-1 flex flex-col">
           <header className="h-12 flex items-center border-b border-border/50 px-4">
             <SidebarTrigger className="mr-4" />
-            <h2 className="text-lg font-semibold">Agentes IA</h2>
+            <h2 className="text-lg font-semibold">Digital Workers</h2>
           </header>
           <div className="flex-1 p-6">
             <div className="space-y-6">
