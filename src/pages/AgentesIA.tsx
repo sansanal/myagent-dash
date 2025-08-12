@@ -499,7 +499,7 @@ export const AgentesIA = () => {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Total Agentes</p>
-                      <p className="text-2xl font-bold text-foreground">{agents.length}</p>
+                      <p className="text-2xl font-bold text-foreground">{new Set(agents.map(a => a.workflow_id)).size}</p>
                     </div>
                   </div>
                 </Card>
