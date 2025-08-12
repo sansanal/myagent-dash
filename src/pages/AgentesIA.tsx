@@ -498,8 +498,8 @@ export const AgentesIA = () => {
                       <Bot className="w-5 h-5 text-primary-foreground" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Total Agentes</p>
-                      <p className="text-2xl font-bold text-foreground">{new Set(agents.map(a => a.workflow_id)).size}</p>
+                      <p className="text-sm text-muted-foreground">Total Workflows</p>
+                      <p className="text-2xl font-bold text-foreground">{workflows.length}</p>
                     </div>
                   </div>
                 </Card>
