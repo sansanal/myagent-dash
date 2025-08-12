@@ -33,6 +33,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { DashboardStats } from "@/components/DashboardStats";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 interface AIAgent {
   id: string;
@@ -152,6 +153,7 @@ export const AgentesIA = () => {
   // Confirmación de activación
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingWorkflowId, setPendingWorkflowId] = useState<string | null>(null);
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
 
   // Mapeo local de precios en céntimos (EUR/mes)
   const workflowPricesCents: Record<string, number> = {
@@ -317,6 +319,33 @@ export const AgentesIA = () => {
         title: "Agente ejecutándose",
         description: "El agente ha comenzado su ejecución",
       });
+
+      // Mostrar pop-up informativo
+      setEmailDialogOpen(true);
+
+      // Enviar correos de notificación
+      try {
+        const agent = agents.find(a => a.id === agentId);
+        const workflowName = agent?.name || 'Workflow';
+        const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined;
+        const { error: mailError } = await supabase.functions.invoke('send-activation-email', {
+          headers,
+          body: {
+            user_email: user?.email,
+            workflow_name: workflowName,
+          },
+        });
+        if (mailError) {
+          throw mailError;
+        }
+      } catch (mailErr) {
+        console.error('Error enviando correo de activación:', mailErr);
+        toast({
+          title: "Aviso",
+          description: "No se pudo enviar el correo de notificación. Revisa la configuración de email.",
+          variant: "destructive",
+        });
+      }
 
       // Refresh executions after a delay
       setTimeout(() => {
@@ -636,6 +665,20 @@ export const AgentesIA = () => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
+
+                <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>¡Activación en proceso!</DialogTitle>
+                      <DialogDescription>
+                        En 24 horas le enviaremos un correo para pedir las credenciales necesarias para poder usar este workflow.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button onClick={() => setEmailDialogOpen(false)}>Entendido</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* Agents Grid */}
