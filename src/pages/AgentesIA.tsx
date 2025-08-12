@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { 
-  Bot, Play, Pause, Settings, Trash2, 
+  Bot, Play, Pause, Trash2, 
   TrendingUp, Calendar, Clock, AlertCircle, Mail, MessageSquare, Database, FileText
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -605,13 +605,6 @@ export const AgentesIA = () => {
                               >
                                 <Play className="w-4 h-4 mr-2" />
                                 Ejecutar
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="sm"
-                                className="text-muted-foreground hover:text-foreground"
-                              >
-                                <Settings className="w-4 h-4" />
                               </Button>
                             </div>
                           </TableCell>
