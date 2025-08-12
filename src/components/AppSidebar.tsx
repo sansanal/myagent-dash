@@ -37,7 +37,7 @@ export const AppSidebar = () => {
   
   const menuItems = [
     { icon: Workflow, label: "Workflows", path: "/dashboard" },
-    { icon: Bot, label: "Agentes AI", path: "/agents" },
+    { icon: Bot, label: "Digital workers", path: "/agents" },
     { icon: CreditCard, label: "Facturación", path: "/billing" },
     { icon: BarChart3, label: "Analytics", path: "/analytics" },
     { icon: Users, label: "Equipos", path: "/equipos" },
