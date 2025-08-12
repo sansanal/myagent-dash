@@ -59,7 +59,7 @@ export const AppSidebar = () => {
           {open && (
             <div>
               <h1 className="text-lg font-bold text-foreground">AI Platform</h1>
-              <p className="text-xs text-muted-foreground">Workflow Manager</p>
+              <p className="text-xs text-muted-foreground">Digital workers manager</p>
             </div>
           )}
         </div>
