@@ -51,6 +51,17 @@ serve(async (req) => {
       });
     }
 
+    // Parse body flags (e.g., includePrices) to avoid heavy Stripe calls by default
+    let includePrices = false;
+    try {
+      if (req.method !== "GET") {
+        const body = await req.json();
+        includePrices = Boolean((body as any)?.includePrices);
+      }
+    } catch (_) {
+      // no body provided – keep defaults
+    }
+
     // Fetch profiles, subscribers, and agents
     const [{ data: profiles, error: profilesError }, { data: subscribers, error: subsError }, { data: agents, error: agentsError }] = await Promise.all([
       supabaseService.from("profiles").select("user_id, email, full_name"),
@@ -77,33 +88,50 @@ serve(async (req) => {
 
     const results: Array<{ user_id: string; full_name: string | null; email: string; workflows_active: number; price_monthly_cents: number; currency: string | null }> = [];
 
-    for (const p of profiles || []) {
-      const userId = p.user_id as string;
-      const workflowsActive = activeCounts.get(userId) || 0;
-      const sub = subsByUser.get(userId);
-      let price = 0;
-      let currency: string | null = null;
+    // Prepare price map limited to avoid Stripe rate limits
+    const priceByCustomer = new Map<string, { amount: number; currency: string }>();
+    if (includePrices && stripe) {
+      const customers: string[] = (subscribers || [])
+        .filter((s: any) => s.subscribed && s.stripe_customer_id)
+        .map((s: any) => s.stripe_customer_id as string);
 
-      if (sub?.subscribed && sub.stripe_customer_id && stripe) {
+      const limited = customers.slice(0, 10); // limit external calls to avoid timeouts
+      const pricePromises = limited.map(async (customerId) => {
         try {
-          const subs = await stripe.subscriptions.list({ customer: sub.stripe_customer_id, status: "active", limit: 1 });
-          if (subs.data.length > 0) {
-            const item = subs.data[0].items.data[0];
-            price = item.price.unit_amount ?? 0;
-            currency = item.price.currency ?? null;
+          const subs = await stripe!.subscriptions.list({ customer: customerId, status: "active", limit: 1 });
+          const item = subs.data[0]?.items.data[0];
+          if (item?.price?.unit_amount != null) {
+            priceByCustomer.set(customerId, {
+              amount: item.price.unit_amount!,
+              currency: item.price.currency || "usd",
+            });
           }
         } catch (e) {
           log("Stripe fetch error", e);
         }
-      }
+      });
+      await Promise.allSettled(pricePromises);
+    }
+
+    const subsByUser = new Map<string, { subscribed: boolean; stripe_customer_id: string | null }>();
+    (subscribers || []).forEach((s: any) =>
+      subsByUser.set(s.user_id, { subscribed: !!s.subscribed, stripe_customer_id: s.stripe_customer_id })
+    );
+
+    for (const p of profiles || []) {
+      const userId = p.user_id as string;
+      const workflowsActive = activeCounts.get(userId) || 0;
+      const sub = subsByUser.get(userId);
+      const customerId = sub?.stripe_customer_id || null;
+      const priceInfo = customerId ? priceByCustomer.get(customerId) : undefined;
 
       results.push({
         user_id: userId,
         full_name: (p.full_name as string) ?? null,
         email: p.email as string,
         workflows_active: workflowsActive,
-        price_monthly_cents: price,
-        currency,
+        price_monthly_cents: priceInfo?.amount ?? 0,
+        currency: priceInfo?.currency ?? null,
       });
     }
 
