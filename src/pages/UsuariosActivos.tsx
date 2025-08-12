@@ -31,14 +31,17 @@ export default function UsuariosActivos() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { data, error } = await supabase.functions.invoke("list-active-users", { body: { includePrices: false } });
-      if (error) {
-        setError(error.message);
-        setData([]);
-      } else {
+      try {
+        const { data, error } = await supabase.functions.invoke("list-active-users", { body: { includePrices: false } });
+        if (error) throw new Error(error.message);
         setData((data?.users as ActiveUserItem[]) || []);
+        setError(null);
+      } catch (e: any) {
+        setError(e?.message || "Error al cargar usuarios.");
+        setData([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     if (hasRole("superadmin")) fetchData();

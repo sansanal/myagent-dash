@@ -113,11 +113,6 @@ serve(async (req) => {
       await Promise.allSettled(pricePromises);
     }
 
-    const subsByUser = new Map<string, { subscribed: boolean; stripe_customer_id: string | null }>();
-    (subscribers || []).forEach((s: any) =>
-      subsByUser.set(s.user_id, { subscribed: !!s.subscribed, stripe_customer_id: s.stripe_customer_id })
-    );
-
     for (const p of profiles || []) {
       const userId = p.user_id as string;
       const workflowsActive = activeCounts.get(userId) || 0;
