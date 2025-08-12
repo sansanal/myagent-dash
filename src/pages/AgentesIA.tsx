@@ -510,9 +510,9 @@ export const AgentesIA = () => {
                       <Play className="w-5 h-5 text-success-foreground" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Activos</p>
+                      <p className="text-sm text-muted-foreground">Workflows funcionando</p>
                       <p className="text-2xl font-bold text-foreground">
-                        {agents.filter(a => a.status === 'active').length}
+                        {workflows.filter(w => w.enabled).length}
                       </p>
                     </div>
                   </div>
