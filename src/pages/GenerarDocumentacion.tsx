@@ -130,40 +130,44 @@ const GenerarDocumentacion = () => {
 
           <main className="flex-1 overflow-auto p-4">
             <div className="w-full space-y-8">
-              {/* Quick Actions */}
+              {/* Document Types with Quick Actions */}
               <div>
-                <h2 className="text-xl font-semibold text-foreground mb-6">Acciones Rápidas</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="p-6">
-                    <div className="text-center">
-                      <div className="p-4 rounded-full bg-blue-100 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                        <FileText className="w-8 h-8 text-blue-600" />
+                <h2 className="text-xl font-semibold text-foreground mb-6">Generar Documentación</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {documentTypes.map((type) => (
+                    <Card key={type.id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer group">
+                      <div className="flex flex-col h-full">
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className={`p-3 rounded-lg ${type.color} text-white group-hover:scale-110 transition-transform`}>
+                            <type.icon className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground mb-2">{type.name}</h3>
+                            <p className="text-sm text-muted-foreground mb-4">{type.description}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {type.features.map((feature, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                        
+                        <div className="mt-auto space-y-2">
+                          <Button className="w-full" size="sm">
+                            <Zap className="w-4 h-4 mr-2" />
+                            Generar
+                          </Button>
+                          <Button className="w-full" variant="outline" size="sm">
+                            <Upload className="w-4 h-4 mr-2" />
+                            Importar
+                          </Button>
+                        </div>
                       </div>
-                      <h3 className="font-semibold text-foreground mb-2">Nuevo Documento</h3>
-                      <p className="text-sm text-muted-foreground mb-4">Crea documentación desde cero</p>
-                      <Button className="w-full">Comenzar</Button>
-                    </div>
-                  </Card>
-                  <Card className="p-6">
-                    <div className="text-center">
-                      <div className="p-4 rounded-full bg-green-100 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                        <Upload className="w-8 h-8 text-green-600" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-2">Importar Código</h3>
-                      <p className="text-sm text-muted-foreground mb-4">Genera docs desde tu código</p>
-                      <Button className="w-full" variant="outline">Importar</Button>
-                    </div>
-                  </Card>
-                  <Card className="p-6">
-                    <div className="text-center">
-                      <div className="p-4 rounded-full bg-purple-100 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                        <Settings className="w-8 h-8 text-purple-600" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-2">Configuración</h3>
-                      <p className="text-sm text-muted-foreground mb-4">Personaliza la generación</p>
-                      <Button className="w-full" variant="outline">Configurar</Button>
-                    </div>
-                  </Card>
+                    </Card>
+                  ))}
                 </div>
               </div>
 
@@ -215,36 +219,6 @@ const GenerarDocumentacion = () => {
                 </Card>
               </div>
 
-              {/* Document Types */}
-              <div>
-                <h2 className="text-xl font-semibold text-foreground mb-6">Tipos de Documentación</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {documentTypes.map((type) => (
-                    <Card key={type.id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-                      <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-lg ${type.color} text-white`}>
-                          <type.icon className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-foreground mb-2">{type.name}</h3>
-                          <p className="text-sm text-muted-foreground mb-4">{type.description}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {type.features.map((feature, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {feature}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <Button className="w-full mt-4" variant="outline">
-                        <Zap className="w-4 h-4 mr-2" />
-                        Generar
-                      </Button>
-                    </Card>
-                  ))}
-                </div>
-              </div>
 
               {/* Recent Documents */}
               <div>
