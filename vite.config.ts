@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => ({
       "localhost",
       "127.0.0.1",
       "web-app-ai-agentic.rzd02y.easypanel.host",
+      "web-app-ai-agentic-app.rzd02y.easypanel.host",
       "*.easypanel.host"
     ],
   },
