@@ -1,5 +1,7 @@
 # AI Platform v1 - Digital Workers Manager
 
+Una plataforma completa para gestionar agentes de IA y workflows automatizados.
+
 ## 🚀 Deploy en Easypanel
 
 ### Configuración Sencilla
@@ -30,8 +32,18 @@ npm run dev
 
 ## 📋 Características
 
-- ✅ Dashboard de gestión de workflows
-- ✅ Autenticación con Supabase
-- ✅ Sistema de pagos con Stripe
-- ✅ Generador de documentación
-- ✅ Responsive design
+- ✅ **Dashboard de gestión** de workflows
+- ✅ **Autenticación segura** con Supabase
+- ✅ **Sistema de pagos** con Stripe
+- ✅ **Generador de documentación** automático
+- ✅ **Diseño responsive** para todos los dispositivos
+- ✅ **Gestión de usuarios** y permisos
+- ✅ **Monitoreo en tiempo real** de workflows
+
+## 🛠️ Tecnologías
+
+- **Frontend:** React + TypeScript + Vite
+- **UI:** Tailwind CSS + Shadcn/ui
+- **Backend:** Supabase (Auth + Database + Edge Functions)
+- **Pagos:** Stripe
+- **Deploy:** Easypanel + Docker

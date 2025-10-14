@@ -39,7 +39,7 @@ serve(async (req: Request): Promise<Response> => {
     const to = [user_email, "chaume@vlptech.es"]; // destinatarios
 
     const { error: emailError } = await resend.emails.send({
-      from: "Lovable <onboarding@resend.dev>",
+      from: "AI Platform <noreply@aiplatform.com>",
       to,
       subject,
       html,
