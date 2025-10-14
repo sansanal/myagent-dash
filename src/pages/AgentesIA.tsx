@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { 
   Bot, Play, Pause, Trash2, 
-  TrendingUp, Calendar, Clock, AlertCircle, Mail, MessageSquare, Database, FileText
+  TrendingUp, Calendar, Clock, AlertCircle, Mail, MessageSquare, Database, FileText, Zap
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -634,6 +634,21 @@ export const AgentesIA = () => {
                               >
                                 <Play className="w-4 h-4 mr-2" />
                                 Ejecutar
+                              </Button>
+                              <Button 
+                                variant="default" 
+                                size="sm"
+                                onClick={() => {
+                                  if (workflow.id === "6") {
+                                    window.open('/generar-documentacion', '_blank');
+                                  } else {
+                                    window.open(`/workflow/${workflow.id}`, '_blank');
+                                  }
+                                }}
+                                className="bg-primary hover:bg-primary/90"
+                              >
+                                <Zap className="w-4 h-4 mr-2" />
+                                Acceder
                               </Button>
                             </div>
                           </TableCell>

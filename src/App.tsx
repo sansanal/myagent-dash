@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import { AgentesIA } from "./pages/AgentesIA";
 import Billing from "./pages/Billing";
 import UsuariosActivos from "./pages/UsuariosActivos";
+import GenerarDocumentacion from "./pages/GenerarDocumentacion";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <UsuariosActivos />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/generar-documentacion" 
+                element={
+                  <ProtectedRoute>
+                    <GenerarDocumentacion />
                   </ProtectedRoute>
                 } 
               />
