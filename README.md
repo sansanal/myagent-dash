@@ -1,73 +1,37 @@
-# Welcome to your Lovable project
+# AI Platform v1 - Digital Workers Manager
 
-## Project info
+## 🚀 Deploy en Easypanel
 
-**URL**: https://lovable.dev/projects/1c19cc8b-b501-4d26-bc66-d61c6ed60121
+### Configuración Sencilla
 
-## How can I edit this code?
+1. **Selecciona "Caja"** en Easypanel
+2. **Conecta el repositorio:** `https://github.com/sansanal/myagent-dash`
+3. **Puerto:** `3000`
+4. **Variables de entorno:**
+   - `VITE_SUPABASE_URL` = tu URL de Supabase
+   - `VITE_SUPABASE_ANON_KEY` = tu anon key de Supabase
 
-There are several ways of editing your application.
+### Desarrollo Local
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/1c19cc8b-b501-4d26-bc66-d61c6ed60121) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+```bash
+# Instalar dependencias
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Ejecutar en desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Scripts Disponibles
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `npm run dev` - Servidor de desarrollo
+- `npm run build` - Build de producción
+- `npm run start` - Servidor de producción
+- `npm run lint` - Linter
 
-**Use GitHub Codespaces**
+## 📋 Características
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/1c19cc8b-b501-4d26-bc66-d61c6ed60121) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- ✅ Dashboard de gestión de workflows
+- ✅ Autenticación con Supabase
+- ✅ Sistema de pagos con Stripe
+- ✅ Generador de documentación
+- ✅ Responsive design
