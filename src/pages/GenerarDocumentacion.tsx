@@ -33,7 +33,7 @@ const GenerarDocumentacion = () => {
     },
     {
       id: "database",
-      name: "Documentación de Base de Datos",
+      name: "Documentación de base de datos",
       description: "Crea documentación completa de esquemas y relaciones",
       icon: Database,
       features: ["Esquemas", "Relaciones", "Índices", "Procedimientos"],
@@ -41,7 +41,7 @@ const GenerarDocumentacion = () => {
     },
     {
       id: "user",
-      name: "Manual de Usuario",
+      name: "Manual de usuario",
       description: "Genera guías de usuario detalladas y tutoriales",
       icon: Users,
       features: ["Tutoriales", "Capturas", "Pasos", "FAQ"],
@@ -49,7 +49,7 @@ const GenerarDocumentacion = () => {
     },
     {
       id: "technical",
-      name: "Documentación Técnica",
+      name: "Documentación técnica",
       description: "Documentación técnica para desarrolladores",
       icon: BookOpen,
       features: ["Arquitectura", "Configuración", "Deployment", "Troubleshooting"],
@@ -60,7 +60,7 @@ const GenerarDocumentacion = () => {
   const recentDocuments = [
     {
       id: "1",
-      name: "API Documentation v2.1",
+      name: "API documentation v2.1",
       type: "API",
       status: "completed",
       created: "Hace 2 horas",
@@ -68,7 +68,7 @@ const GenerarDocumentacion = () => {
     },
     {
       id: "2", 
-      name: "User Manual - Mobile App",
+      name: "User manual - Mobile app",
       type: "Manual",
       status: "processing",
       created: "Hace 1 día",
@@ -76,7 +76,7 @@ const GenerarDocumentacion = () => {
     },
     {
       id: "3",
-      name: "Database Schema v1.0",
+      name: "Database schema v1.0",
       type: "Database",
       status: "completed",
       created: "Hace 3 días",
@@ -130,47 +130,6 @@ const GenerarDocumentacion = () => {
 
           <main className="flex-1 overflow-auto p-4">
             <div className="w-full space-y-8">
-              {/* Document Types with Quick Actions */}
-              <div>
-                <h2 className="text-xl font-semibold text-foreground mb-6">Generar Documentación</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {documentTypes.map((type) => (
-                    <Card key={type.id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer group">
-                      <div className="flex flex-col h-full">
-                        <div className="flex items-start gap-4 mb-4">
-                          <div className={`p-3 rounded-lg ${type.color} text-white group-hover:scale-110 transition-transform`}>
-                            <type.icon className="w-6 h-6" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-foreground mb-2">{type.name}</h3>
-                            <p className="text-sm text-muted-foreground mb-4">{type.description}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {type.features.map((feature, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {feature}
-                            </Badge>
-                          ))}
-                        </div>
-                        
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full" size="sm">
-                            <Zap className="w-4 h-4 mr-2" />
-                            Generar
-                          </Button>
-                          <Button className="w-full" variant="outline" size="sm">
-                            <Upload className="w-4 h-4 mr-2" />
-                            Importar
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="p-6">
@@ -219,15 +178,51 @@ const GenerarDocumentacion = () => {
                 </Card>
               </div>
 
+              {/* Document Types with Quick Actions */}
+              <div>
+                <h2 className="text-xl font-semibold text-foreground mb-6">Generar documentación</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {documentTypes.map((type) => (
+                    <Card key={type.id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer group">
+                      <div className="flex flex-col h-full">
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className={`p-3 rounded-lg ${type.color} text-white group-hover:scale-110 transition-transform`}>
+                            <type.icon className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground mb-2">{type.name}</h3>
+                            <p className="text-sm text-muted-foreground mb-4">{type.description}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {type.features.map((feature, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                        
+                        <div className="mt-auto space-y-2">
+                          <Button className="w-full" size="sm">
+                            <Zap className="w-4 h-4 mr-2" />
+                            Generar
+                          </Button>
+                          <Button className="w-full" variant="outline" size="sm">
+                            <Upload className="w-4 h-4 mr-2" />
+                            Importar
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
 
               {/* Recent Documents */}
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-foreground">Documentos Recientes</h2>
-                  <Button variant="outline">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Subir Archivo
-                  </Button>
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-foreground">Documentos recientes</h2>
                 </div>
                 <Card>
                   <div className="overflow-x-auto">
