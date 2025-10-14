@@ -8,6 +8,12 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    allowedHosts: [
+      "localhost",
+      "127.0.0.1",
+      "web-app-app-ai-agentic.rzd02y.easypanel.host",
+      "*.easypanel.host"
+    ],
   },
   plugins: [
     react(),
